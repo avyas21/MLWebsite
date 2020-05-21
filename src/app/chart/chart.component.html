@@ -1,0 +1,30 @@
+<button class = "reset" (click) = "clearData()">Reset</button>
+
+<form #addForm="ngForm" (ngSubmit)="addPoint(addForm)" action = "">
+
+  <label for="x">X: </label>
+  <input type="number" id="x"
+         ngModel name="x" required>
+
+  <label for="y">Y: </label>
+  <input type="number" id="y"
+         ngModel name="y" required>
+
+  <label for="type">Type: </label>
+  <select id="type"
+          ngModel name="type" required>
+    <option *ngFor="let type of types" [value]="type">{{type}}</option>
+  </select>
+
+  <button type="submit"> Submit </button>
+
+</form>
+
+<div style="display: block;">
+  <canvas baseChart
+    [datasets]="scatterChartData"
+    [colors]="scatterChartColors"
+    [options]="scatterChartOptions"
+    [chartType]="scatterChartType">
+  </canvas>
+</div>
