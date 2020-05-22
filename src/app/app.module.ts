@@ -11,6 +11,7 @@ import { DeeplearningComponent } from './deeplearning/deeplearning.component';
 import { ReinforcementlearningComponent } from './reinforcementlearning/reinforcementlearning.component';
 import { HomeComponent } from './home/home.component';
 import { ChartComponent } from './chart/chart.component';
+import { PerceptronComponent } from './perceptron/perceptron.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ChartComponent } from './chart/chart.component';
     DeeplearningComponent,
     ReinforcementlearningComponent,
     HomeComponent,
-    ChartComponent
+    ChartComponent,
+    PerceptronComponent
   ],
   imports: [
     BrowserModule,
