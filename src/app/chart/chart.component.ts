@@ -12,11 +12,18 @@ import { NgForm } from '@angular/forms';
 export class ChartComponent implements OnInit {
   types= ['A','B'];
 
+  min = -2;
+  max = 3;
+
   gotParameters = false;
 
   W = [0,0];
   b = 0;
   alpha = 0;
+
+  W_initial = [0,0];
+  b_initial = 0;
+  alpha_initial = 0;
 
   public scatterChartOptions: ChartOptions = {
     responsive: true,
@@ -34,8 +41,7 @@ export class ChartComponent implements OnInit {
       pointRadius: 10,
     },
     {
-      data: [{x: 0, y:0},
-      {x:1,y:1}, {x:2, y:2}],
+      data: [],
       label: 'Boundary',
       type:  'line',
       pointRadius: 1,
@@ -68,7 +74,6 @@ export class ChartComponent implements OnInit {
   constructor() { }
 
   resetData() {
-    console.log('RESET');
     this.gotParameters = false;
   }
 
@@ -85,8 +90,7 @@ export class ChartComponent implements OnInit {
         pointRadius: 10,
       },
       {
-        data: [{x: 0, y:0},
-        {x:1,y:1}, {x:2, y:2}],
+        data: [],
         label: 'Boundary',
         type:  'line',
         pointRadius: 1,
@@ -98,6 +102,21 @@ export class ChartComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  updateBoundary() {
+    this.scatterChartData[2].data = [];
+    const data: object[] = this.scatterChartData[2].data as object[];
+    var i;
+    for(i = this.min; i < this.max; ++i) {
+      var x2;
+      if(this.W[1]) {
+        x2 = ((-1*this.b)-(this.W[0]*i))/this.W[1];
+      }
+      else {
+        x2 = 0;
+      }
+      data.push({x: i, y: x2});
+    }
+  }
 
   getParameters(form: NgForm) {
     console.log(form.value);
@@ -113,7 +132,14 @@ export class ChartComponent implements OnInit {
     this.W[0] = form.value.w1;
     this.W[1] = form.value.w2;
     this.b = form.value.b;
+
+    this.W_initial = this.W.slice(0);
+    this.alpha_initial = this.alpha;
+    this.b_initial = this.b;
+
     this.gotParameters = true;
+
+    this.updateBoundary();
   }
 
 
@@ -124,6 +150,38 @@ export class ChartComponent implements OnInit {
     || form.value.type == "" || form.value.type == null) {
       alert('Invalid Input. Enter all fields');
       return;
+    }
+
+    if(form.value.x < this.min) {
+      this.min = form.value.x;
+    }
+
+    else if(form.value.x > this.max) {
+      this.max = form.value.x;
+    }
+
+    var changed = false;
+
+    if((this.W[0]*form.value.x) + (this.W[1]*form.value.y) + this.b > 0) {
+      if(form.value.type != 'A') {
+        this.W[0] = this.W[0] + this.alpha*form.value.x;
+        this.W[1] = this.W[1] + this.alpha*form.value.y;
+        this.b = this.b + this.alpha;
+        changed = true;
+      }
+    }
+
+    else {
+      if(form.value.type != 'B') {
+        this.W[0] = this.W[0] - this.alpha*form.value.x;
+        this.W[1] = this.W[1] - this.alpha*form.value.y;
+        this.b = this.b - this.alpha;
+        changed = true;
+      }
+    }
+
+    if(changed) {
+      this.updateBoundary();
     }
 
     this.scatterChartData.forEach(element => {

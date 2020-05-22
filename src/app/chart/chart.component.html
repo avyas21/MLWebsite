@@ -41,7 +41,10 @@
 
 </form>
 
-<div *ngIf = "gotParameters" style="display: block;">
+<div *ngIf = "gotParameters">
+W = [{{W}}], &alpha; = {{alpha}},b = {{b}}
+</div>
+<div *ngIf = "gotParameters" style="display: block; width: 1000px;">
   <canvas baseChart
     [datasets]="scatterChartData"
     [colors]="scatterChartColors"
