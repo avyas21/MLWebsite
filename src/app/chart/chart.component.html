@@ -44,6 +44,21 @@
 <div *ngIf = "gotParameters">
 W = [{{W}}], &alpha; = {{alpha}},b = {{b}}
 </div>
+
+<div *ngIf = "showData">
+{{dataStatement}}
+</div>
+
+<div *ngIf = "showRight">
+{{rightStatement}}
+</div>
+
+<div *ngIf = "showWrong">
+{{wrongStatement}} <br/>
+{{wrongW}} <br/>
+{{wrongb}}
+</div>
+
 <div *ngIf = "gotParameters" style="display: block; width: 1000px;">
   <canvas baseChart
     [datasets]="scatterChartData"

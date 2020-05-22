@@ -16,6 +16,15 @@ export class ChartComponent implements OnInit {
   max = 3;
 
   gotParameters = false;
+  showData = false;
+  showRight = false;
+  showWrong = false;
+
+  rightStatement = 'Perceptron classifies data point correctly so there is no update'
+  wrongStatement = ''
+  wrongW = ''
+  wrongb = ''
+  dataStatement = ''
 
   W = [0,0];
   b = 0;
@@ -75,28 +84,23 @@ export class ChartComponent implements OnInit {
 
   resetData() {
     this.gotParameters = false;
+    this.showData = false;
+    this.showRight = false;
+    this.showWrong = false;
   }
 
   clearData() {
-    this.scatterChartData = [
-      {
-        data: [],
-        label: 'A',
-        pointRadius: 10,
-      },
-      {
-        data: [],
-        label: 'B',
-        pointRadius: 10,
-      },
-      {
-        data: [],
-        label: 'Boundary',
-        type:  'line',
-        pointRadius: 1,
-        fill: false
-      },
-    ];
+    this.scatterChartData[0].data = [];
+    this.scatterChartData[1].data = [];
+    this.alpha = this.alpha_initial;
+    this.W = this.W_initial.slice(0);
+    this.b = this.b_initial;
+    this.min = -2;
+    this.max = 3;
+    this.showData = false;
+    this.showRight = false;
+    this.showWrong = false;
+    this.updateBoundary();
   }
 
   ngOnInit(): void {
@@ -162,26 +166,68 @@ export class ChartComponent implements OnInit {
 
     var changed = false;
 
-    if((this.W[0]*form.value.x) + (this.W[1]*form.value.y) + this.b > 0) {
+    var calc = (this.W[0]*form.value.x) + (this.W[1]*form.value.y) + this.b;
+
+    this.showRight = false;
+    this.showWrong = false;
+    this.showData= true;
+    this.dataStatement = 'Perceptron calculates W.X + b = (' + this.W[0].toString()
+    + '*' + form.value.x.toString() + ') + (' + this.W[1].toString()
+    + '*' + form.value.y.toString() + ') + ' + this.b.toString() + ' = '
+    + calc.toString();
+
+    if(calc > 0) {
       if(form.value.type != 'A') {
+        this.showWrong = true;
+        this.wrongStatement = 'The Perceptron incorrectly classifies the' +
+          ' data point as A, so the parameters are updated as follows: ';
+
+        this.wrongW = 'W = W + \u03B1*X*(1) = ['  + this.W.toString() + '] + ' +
+          this.alpha.toString() + '*' + '[' + form.value.x.toString() + ','
+          + form.value.y.toString() + '] = ';
+
+        this.wrongb = 'b = b + \u03B1*1*(1) = ' + this.b.toString() + ' + ' +
+          this.alpha.toString() + ' = ';
+
         this.W[0] = this.W[0] + this.alpha*form.value.x;
         this.W[1] = this.W[1] + this.alpha*form.value.y;
         this.b = this.b + this.alpha;
         changed = true;
+
+        this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
+        this.wrongb = this.wrongb + this.b.toString();
       }
     }
 
     else {
       if(form.value.type != 'B') {
+        this.showWrong = true;
+        this.wrongStatement = 'The Perceptron incorrectly classifies the' +
+          ' data point as B, so the parameters are updated as follows: ';
+
+        this.wrongW = 'W = W + \u03B1*X*(-1) = [' + this.W.toString() + '] - ' +
+          this.alpha.toString() + '*' + '[' + form.value.x.toString() + ','
+          + form.value.y.toString() + '] = ';
+
+        this.wrongb = 'b = b + \u03B1*1*(-1) = ' + this.b.toString() + ' - ' +
+          this.alpha.toString() + ' = ';
+
         this.W[0] = this.W[0] - this.alpha*form.value.x;
         this.W[1] = this.W[1] - this.alpha*form.value.y;
         this.b = this.b - this.alpha;
         changed = true;
+
+        this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
+        this.wrongb = this.wrongb + this.b.toString();
       }
     }
 
     if(changed) {
       this.updateBoundary();
+    }
+
+    else {
+      this.showRight = true;
     }
 
     this.scatterChartData.forEach(element => {
