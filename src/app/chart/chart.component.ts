@@ -12,7 +12,11 @@ import { NgForm } from '@angular/forms';
 export class ChartComponent implements OnInit {
   types= ['A','B'];
 
-  first = true;
+  gotParameters = false;
+
+  W = [0,0];
+  b = 0;
+  alpha = 0;
 
   public scatterChartOptions: ChartOptions = {
     responsive: true,
@@ -63,6 +67,11 @@ export class ChartComponent implements OnInit {
 
   constructor() { }
 
+  resetData() {
+    console.log('RESET');
+    this.gotParameters = false;
+  }
+
   clearData() {
     this.scatterChartData = [
       {
@@ -89,6 +98,23 @@ export class ChartComponent implements OnInit {
   ngOnInit(): void {
   }
 
+
+  getParameters(form: NgForm) {
+    console.log(form.value);
+    if(typeof(form.value.alpha) == 'string' || typeof(form.value.w1) == 'string'
+    || typeof(form.value.w2) == 'string'  || typeof(form.value.b) == 'string'
+    || form.value.alpha == null || form.value.w1 == null
+    || form.value.w2 == null || form.value.b == null) {
+      alert('Invalid Input. Enter all fields');
+      return;
+    }
+
+    this.alpha = form.value.alpha;
+    this.W[0] = form.value.w1;
+    this.W[1] = form.value.w2;
+    this.b = form.value.b;
+    this.gotParameters = true;
+  }
 
 
   addPoint(form: NgForm) {
