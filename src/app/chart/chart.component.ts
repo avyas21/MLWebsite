@@ -53,7 +53,8 @@ export class ChartComponent implements OnInit {
       data: [],
       label: 'Boundary',
       type:  'line',
-      pointRadius: 1,
+      pointRadius: 0,
+      borderWidth: 5,
       fill: false
     },
 
@@ -72,6 +73,14 @@ export class ChartComponent implements OnInit {
       backgroundColor: 'rgba(0,0,50,0.9)',
       borderColor: 'rgba(77,83,96,1)',
       pointBackgroundColor: 'rgba(0,0,50,0.9)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(77,83,96,1)'
+    },
+    {
+      backgroundColor: 'rgba(0,0,0,0.9)',
+      borderColor: 'rgba(77,83,96,1)',
+      pointBackgroundColor: 'rgba(0,0,0,0.9)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgba(77,83,96,1)'
