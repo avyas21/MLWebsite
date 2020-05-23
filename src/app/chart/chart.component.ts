@@ -92,6 +92,9 @@ export class ChartComponent implements OnInit {
   constructor() { }
 
   resetData() {
+    this.scatterChartData[0].data = [];
+    this.scatterChartData[1].data = [];
+    this.scatterChartData[2].data = [];
     this.gotParameters = false;
     this.showData = false;
     this.showRight = false;
