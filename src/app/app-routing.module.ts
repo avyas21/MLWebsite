@@ -5,6 +5,7 @@ import { DeeplearningComponent } from './deeplearning/deeplearning.component';
 import { ReinforcementlearningComponent } from './reinforcementlearning/reinforcementlearning.component';
 import { HomeComponent } from './home/home.component';
 import { PerceptronComponent } from './perceptron/perceptron.component';
+import { LinearRegressionComponent } from './linear-regression/linear-regression.component';
 
 const routes: Routes = [
   { path: 'machinelearning', component: MachinelearningComponent },
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'reinforcementlearning', component: ReinforcementlearningComponent },
   { path: 'home', component: HomeComponent},
   { path: 'machinelearning/perceptron', component: PerceptronComponent},
-  { path: '', redirectTo: '/home', pathMatch: 'full' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'machinelearning/linearregression', component: LinearRegressionComponent}
 ];
 
 @NgModule({

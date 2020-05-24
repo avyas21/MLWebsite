@@ -12,6 +12,7 @@ import { ReinforcementlearningComponent } from './reinforcementlearning/reinforc
 import { HomeComponent } from './home/home.component';
 import { ChartComponent } from './chart/chart.component';
 import { PerceptronComponent } from './perceptron/perceptron.component';
+import { LinearRegressionComponent } from './linear-regression/linear-regression.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { PerceptronComponent } from './perceptron/perceptron.component';
     ReinforcementlearningComponent,
     HomeComponent,
     ChartComponent,
-    PerceptronComponent
+    PerceptronComponent,
+    LinearRegressionComponent
   ],
   imports: [
     BrowserModule,
