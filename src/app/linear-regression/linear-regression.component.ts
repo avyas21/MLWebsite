@@ -18,6 +18,13 @@ export class LinearRegressionComponent implements OnInit {
   }
 
   getParameters(form: NgForm) {
-    console.log(form.value);
+    var points = form.value.points.replace(/\s+/g,'');
+    points = points.replace(/[^()0-9,;]/g,'');
+    points = points.split(';');
+    for(var i = 0; i < 1; ++i) {
+      console.log(/\([0-9]+,[0-9]+\)/.test('(31,21)'));
+    }
+
+    console.log(points);
   }
 }
