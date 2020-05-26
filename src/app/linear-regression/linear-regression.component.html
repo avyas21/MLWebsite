@@ -17,3 +17,15 @@
 
   <button type="submit"> Submit </button>
 </form>
+
+<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
+<button *ngIf = "gotParameters" class = "step" (click) = "step()">Step</button>
+
+<div *ngIf = "gotParameters" style="display: block; width: 1000px;">
+  <canvas baseChart
+    [datasets]="scatterChartData"
+    [colors]="scatterChartColors"
+    [options]="scatterChartOptions"
+    [chartType]="scatterChartType">
+  </canvas>
+</div>
