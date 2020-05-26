@@ -15,7 +15,6 @@ export class LinearRegressionComponent implements OnInit {
   alpha = 0;
   theta1 = 0;
   theta2 = 0;
-  curr_cost = 0;
 
   min = -2;
   max = 3;
@@ -80,6 +79,7 @@ export class LinearRegressionComponent implements OnInit {
   }
 
   step() {
+
     let one = 0;
     let two = 0;
 
@@ -111,6 +111,26 @@ export class LinearRegressionComponent implements OnInit {
     for(var i = this.min; i <= this.max; ++i) {
       data.push({x: i, y: this.regressionFunction(i)});
     }
+  }
+
+  Step(form: NgForm) {
+    console.log(form.value);
+    if(typeof(form.value.steps) == 'string'
+    || form.value.steps == null ) {
+      alert('Invalid Input. Enter Number of Steps');
+      return;
+    }
+
+    if(!(form.value.steps >= 2)) {
+      alert('Steps should be >= 2');
+      return;
+    }
+
+    for(var i = 0; i < form.value.steps; ++i) {
+      this.step();
+    }
+
+
   }
 
   getParameters(form: NgForm) {

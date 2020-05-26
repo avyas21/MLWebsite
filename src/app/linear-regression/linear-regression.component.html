@@ -21,6 +21,30 @@
 <button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
 <button *ngIf = "gotParameters" class = "step" (click) = "step()">Step</button>
 
+<form id="parameterForm" *ngIf = "gotParameters" #timeForm="ngForm" (ngSubmit)="Step(timeForm)" action = "">
+  <label for="steps">Number of Steps: </label>
+  <input type="number" id="steps"
+         ngModel name="steps" min="2" step = "1" required>
+
+  <button type="submit"> Run iterations </button>
+</form>
+
+
+<div *ngIf = "gotParameters">
+  Update Rules: <br/>
+  &Theta;<sub>1</sub> = &Theta;<sub>1</sub> - (&alpha;/data.length) * &Sigma;<sub>y &epsilon;
+    Data</sub> Pred<sub>y</sub> - y <br/>
+
+  &Theta;<sub>2</sub> = &Theta;<sub>2</sub> - (&alpha;/data.length) * &Sigma;<sub>y &epsilon;
+    Data</sub> Pred<sub>y</sub> - y
+</div>
+
+<div *ngIf = "gotParameters">
+<br/>
+Current Cost(Mean Squared Error): <b>{{cost()}}</b> <br/>
+f(x) = &Theta;<sub>1</sub> + &Theta;<sub>2</sub>x = <b>{{theta1}}</b> + <b>{{theta2}}</b>x
+</div>
+
 <div *ngIf = "gotParameters" style="display: block; width: 1000px;">
   <canvas baseChart
     [datasets]="scatterChartData"
