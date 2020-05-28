@@ -1,0 +1,19 @@
+<form id="parameterForm" *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
+  <label for="points">Insert Points: </label>
+  <textarea ngModel id="w3mission" rows="4" cols="50" name = "points" id="points" form = "parameterForm">
+  </textarea>
+
+  <label for="theta1">&Theta;<sub>1</sub>: </label>
+  <input type="number" id="theta1"
+         ngModel name="theta1" required>
+
+  <label for="theta2">&Theta;<sub>2</sub>: </label>
+  <input type="number" id="theta2"
+        ngModel name="theta2" required>
+
+  <label for="alpha">&alpha;: </label>
+  <input type="number" id="alpha"
+         ngModel name="alpha" required>
+
+  <button type="submit"> Submit </button>
+</form>

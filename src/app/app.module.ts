@@ -13,6 +13,7 @@ import { HomeComponent } from './home/home.component';
 import { ChartComponent } from './chart/chart.component';
 import { PerceptronComponent } from './perceptron/perceptron.component';
 import { LinearRegressionComponent } from './linear-regression/linear-regression.component';
+import { LogisticRegressionComponent } from './logistic-regression/logistic-regression.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LinearRegressionComponent } from './linear-regression/linear-regression
     HomeComponent,
     ChartComponent,
     PerceptronComponent,
-    LinearRegressionComponent
+    LinearRegressionComponent,
+    LogisticRegressionComponent
   ],
   imports: [
     BrowserModule,
