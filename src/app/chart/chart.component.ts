@@ -122,7 +122,7 @@ export class ChartComponent implements OnInit {
     this.scatterChartData[2].data = [];
     const data: object[] = this.scatterChartData[2].data as object[];
     var i;
-    for(i = this.min; i < this.max; ++i) {
+    for(i = this.min; i <= this.max; ++i) {
       var x2;
       if(this.W[1]) {
         x2 = ((-1*this.b)-(this.W[0]*i))/this.W[1];

@@ -32,16 +32,16 @@
 
 <div *ngIf = "gotParameters">
   Update Rules: <br/>
-  &Theta;<sub>1</sub> = &Theta;<sub>1</sub> - (&alpha;/data.length) * &Sigma;<sub>y &epsilon;
+  &Theta;<sub>1</sub> = &Theta;<sub>1</sub> - (&alpha;/data.length) * &Sigma;<sub>(x,y) &epsilon;
     Data</sub> Pred<sub>y</sub> - y <br/>
 
-  &Theta;<sub>2</sub> = &Theta;<sub>2</sub> - (&alpha;/data.length) * &Sigma;<sub>y &epsilon;
-    Data</sub> Pred<sub>y</sub> - y
+  &Theta;<sub>2</sub> = &Theta;<sub>2</sub> - (&alpha;/data.length) * &Sigma;<sub>(x,y) &epsilon;
+    Data</sub> (Pred<sub>y</sub> - y)*x
 </div>
 
 <div *ngIf = "gotParameters">
 <br/>
-Current Cost(Mean Squared Error): <b>{{cost()}}</b> <br/>
+Current Cost: <b>{{cost()}}</b> <br/>
 f(x) = &Theta;<sub>1</sub> + &Theta;<sub>2</sub>x = <b>{{theta1}}</b> + <b>{{theta2}}</b>x
 </div>
 
