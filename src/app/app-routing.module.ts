@@ -7,6 +7,8 @@ import { HomeComponent } from './home/home.component';
 import { PerceptronComponent } from './perceptron/perceptron.component';
 import { LinearRegressionComponent } from './linear-regression/linear-regression.component';
 import { LogisticRegressionComponent } from './logistic-regression/logistic-regression.component';
+import { KmeansComponent } from './kmeans/kmeans.component';
+import { KnnComponent } from './knn/knn.component';
 
 const routes: Routes = [
   { path: 'machinelearning', component: MachinelearningComponent },
@@ -16,7 +18,9 @@ const routes: Routes = [
   { path: 'machinelearning/perceptron', component: PerceptronComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'machinelearning/linearregression', component: LinearRegressionComponent},
-  { path: 'machinelearning/logisticregression', component: LogisticRegressionComponent }
+  { path: 'machinelearning/logisticregression', component: LogisticRegressionComponent },
+  { path: 'machinelearning/knn', component: KnnComponent },
+  { path: 'machinelearning/kmeans', component: KmeansComponent }
 ];
 
 @NgModule({

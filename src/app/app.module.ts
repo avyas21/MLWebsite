@@ -14,6 +14,8 @@ import { ChartComponent } from './chart/chart.component';
 import { PerceptronComponent } from './perceptron/perceptron.component';
 import { LinearRegressionComponent } from './linear-regression/linear-regression.component';
 import { LogisticRegressionComponent } from './logistic-regression/logistic-regression.component';
+import { KmeansComponent } from './kmeans/kmeans.component';
+import { KnnComponent } from './knn/knn.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { LogisticRegressionComponent } from './logistic-regression/logistic-regr
     ChartComponent,
     PerceptronComponent,
     LinearRegressionComponent,
-    LogisticRegressionComponent
+    LogisticRegressionComponent,
+    KmeansComponent,
+    KnnComponent
   ],
   imports: [
     BrowserModule,
