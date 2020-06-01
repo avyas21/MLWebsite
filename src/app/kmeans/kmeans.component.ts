@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ChartDataSets, ChartType, ChartOptions } from 'chart.js';
+import { Label } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-kmeans',
@@ -10,6 +14,17 @@ export class KmeansComponent implements OnInit {
   clusters = [];
   points = [];
   k = 0;
+  gotParameters = false;
+
+  public scatterChartOptions: ChartOptions = {
+    responsive: true,
+  };
+
+  public scatterChartData: ChartDataSets[] = [];
+
+  public scatterChartColors:Array<any> = [];
+
+  public scatterChartType: ChartType = 'scatter';
 
   constructor() { }
 
@@ -48,8 +63,13 @@ export class KmeansComponent implements OnInit {
         return;
       }
 
+      if(form.value.k > this.points.length) {
+        alert('Number of clusters cannot be greater than number of points');
+        return;
+      }
+
       this.k = form.value.k;
-      console.log(this.points);
+      this.gotParameters = true;
   }
 
 }
