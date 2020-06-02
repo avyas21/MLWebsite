@@ -40,7 +40,7 @@ export class LinearRegressionComponent implements OnInit {
   ];
 
   public scatterChartColors:Array<any> = [
-    { // grey
+    { 
       backgroundColor: 'rgba(100,0,0,0.9)',
       borderColor: 'rgba(148,159,177,1)',
       pointBackgroundColor: 'rgba(100,0,0,0.9)',
