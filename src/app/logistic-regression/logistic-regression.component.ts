@@ -209,7 +209,6 @@ export class LogisticRegressionComponent implements OnInit {
         valid_point = valid_point.slice(0, -1);
         valid_point = valid_point.split(',');
 
-        console.log(valid_point[2]);
 
         if(valid_point[2] == 'B') {
           data2.push({x: parseFloat(valid_point[0]), y: parseFloat(valid_point[1])});
