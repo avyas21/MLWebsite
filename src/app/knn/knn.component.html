@@ -9,6 +9,9 @@
 
   <button type="submit"> Submit </button>
 </form>
+<button *ngIf = "gotParameters" class = "clear" (click) = "clearData()">Clear</button>
+<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button> <br/>
+
 
 <form id="addForm" *ngIf = "gotParameters" #addForm="ngForm" (ngSubmit)="testPoint(addForm)" action = "">
   <label for="x1">X<sub>1</sub>: </label>
@@ -21,6 +24,10 @@
 
   <button type="submit"> Test </button>
 </form>
+
+<div *ngIf = "showClassification">
+  {{classify}} <br/>
+</div>
 
 <div *ngIf = "gotParameters" style="display: block; width: 1000px;">
   <canvas baseChart

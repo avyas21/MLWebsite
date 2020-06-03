@@ -31,6 +31,14 @@ export class KmeansComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  resetData() {
+    this.scatterChartData = [];
+    this.gotParameters = false;
+    this.clusters = [];
+    this.points = [];
+    this.k = 0;
+  }
+
   setClusters() {
     for(var i = 0; i < this.k; ++i) {
       var name = 'Cluster ' + (i+1).toString();
