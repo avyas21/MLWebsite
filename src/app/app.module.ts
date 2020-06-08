@@ -16,6 +16,7 @@ import { LinearRegressionComponent } from './linear-regression/linear-regression
 import { LogisticRegressionComponent } from './logistic-regression/logistic-regression.component';
 import { KmeansComponent } from './kmeans/kmeans.component';
 import { KnnComponent } from './knn/knn.component';
+import { SVMComponent } from './svm/svm.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { KnnComponent } from './knn/knn.component';
     LinearRegressionComponent,
     LogisticRegressionComponent,
     KmeansComponent,
-    KnnComponent
+    KnnComponent,
+    SVMComponent
   ],
   imports: [
     BrowserModule,

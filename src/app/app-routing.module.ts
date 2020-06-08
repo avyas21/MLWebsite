@@ -9,6 +9,7 @@ import { LinearRegressionComponent } from './linear-regression/linear-regression
 import { LogisticRegressionComponent } from './logistic-regression/logistic-regression.component';
 import { KmeansComponent } from './kmeans/kmeans.component';
 import { KnnComponent } from './knn/knn.component';
+import { SVMComponent } from './svm/svm.component';
 
 const routes: Routes = [
   { path: 'machinelearning', component: MachinelearningComponent },
@@ -20,7 +21,8 @@ const routes: Routes = [
   { path: 'machinelearning/linearregression', component: LinearRegressionComponent},
   { path: 'machinelearning/logisticregression', component: LogisticRegressionComponent },
   { path: 'machinelearning/knn', component: KnnComponent },
-  { path: 'machinelearning/kmeans', component: KmeansComponent }
+  { path: 'machinelearning/kmeans', component: KmeansComponent },
+  { path: 'machinelearning/svm', component: SVMComponent}
 ];
 
 @NgModule({
