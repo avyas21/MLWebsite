@@ -1,1 +1,70 @@
-<p>svm works!</p>
+<form *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
+
+  <label for="alpha">Learning Rate: </label>
+  <input type="number" id="alpha"
+         ngModel name="alpha" required>
+
+ <label for="gamma">Regularisation Parameter: </label>
+ <input type="number" id="gamma"
+        ngModel name="gamma" required>
+
+  <label for="w">W: </label>
+  <input type="number" id="w1"
+         ngModel name="w1" required>
+  <input type="number" id="w2"
+        ngModel name="w2" required>
+
+  <label for="b">b: </label>
+  <input type="number" id="b"
+         ngModel name="b" required>
+
+  <button type="submit"> Submit </button>
+
+</form>
+
+<button *ngIf = "gotParameters" class = "clear" (click) = "clearData()">Clear</button>
+<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
+
+<form *ngIf = "gotParameters" #addForm="ngForm" (ngSubmit)="addPoint(addForm)" action = "">
+
+  <label for="x">X: </label>
+  <input type="number" id="x"
+         ngModel name="x" required>
+
+  <label for="y">Y: </label>
+  <input type="number" id="y"
+         ngModel name="y" required>
+
+  <label for="type">Type: </label>
+  <select id="type"
+          ngModel name="type" required>
+    <option *ngFor="let type of types" [value]="type">{{type}}</option>
+  </select>
+
+  <button type="submit"> Submit </button>
+
+</form>
+
+<div *ngIf = "gotParameters">
+W = [{{W}}], &alpha; = {{alpha}},b = {{b}}
+</div>
+
+<div *ngIf = "showData">
+{{dataStatement}}
+</div>
+
+<div *ngIf = "showUpdate">
+{{updateStatement}} <br/>
+{{updateW}} <br/>
+{{updateB}}
+</div>
+
+
+<div *ngIf = "gotParameters" style="display: block; width: 1000px;">
+  <canvas baseChart
+    [datasets]="scatterChartData"
+    [colors]="scatterChartColors"
+    [options]="scatterChartOptions"
+    [chartType]="scatterChartType">
+  </canvas>
+</div>

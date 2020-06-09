@@ -10,8 +10,7 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./chart.component.css']
 })
 export class ChartComponent implements OnInit {
-  types= ['A','B'];
-
+  types = ['A','B'];
   min = -2;
   max = 3;
 
@@ -188,7 +187,7 @@ export class ChartComponent implements OnInit {
     + '*' + form.value.y.toString() + ') + ' + this.b.toString() + ' = '
     + calc.toString();
 
-    if(calc > 0) {
+    if(calc >= 0) {
       if(form.value.type != 'A') {
         this.showWrong = true;
         this.wrongStatement = 'The Perceptron incorrectly classifies the' +
@@ -201,9 +200,9 @@ export class ChartComponent implements OnInit {
         this.wrongb = 'b = b + \u03B1*1*(1) = ' + this.b.toString() + ' + ' +
           this.alpha.toString() + ' = ';
 
-        this.W[0] = this.W[0] + this.alpha*form.value.x;
-        this.W[1] = this.W[1] + this.alpha*form.value.y;
-        this.b = this.b + this.alpha;
+        this.W[0] += this.alpha*form.value.x;
+        this.W[1] += this.alpha*form.value.y;
+        this.b += this.alpha;
         changed = true;
 
         this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
@@ -224,9 +223,9 @@ export class ChartComponent implements OnInit {
         this.wrongb = 'b = b + \u03B1*1*(-1) = ' + this.b.toString() + ' - ' +
           this.alpha.toString() + ' = ';
 
-        this.W[0] = this.W[0] - this.alpha*form.value.x;
-        this.W[1] = this.W[1] - this.alpha*form.value.y;
-        this.b = this.b - this.alpha;
+        this.W[0] -= this.alpha*form.value.x;
+        this.W[1] -= this.alpha*form.value.y;
+        this.b -= this.alpha;
         changed = true;
 
         this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
