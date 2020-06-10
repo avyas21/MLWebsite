@@ -189,6 +189,30 @@ export class ChartComponent implements OnInit {
 
     if(calc >= 0) {
       if(form.value.type != 'A') {
+
+        this.showWrong = true;
+        this.wrongStatement = 'The Perceptron incorrectly classifies the' +
+          ' data point as A, so the parameters are updated as follows: ';
+
+        this.wrongW = 'W = W + \u03B1*X*(-1) = [' + this.W.toString() + '] - ' +
+          this.alpha.toString() + '*' + '[' + form.value.x.toString() + ','
+          + form.value.y.toString() + '] = ';
+
+        this.wrongb = 'b = b + \u03B1*1*(-1) = ' + this.b.toString() + ' - ' +
+          this.alpha.toString() + ' = ';
+
+        this.W[0] -= this.alpha*form.value.x;
+        this.W[1] -= this.alpha*form.value.y;
+        this.b -= this.alpha;
+        changed = true;
+
+        this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
+        this.wrongb = this.wrongb + this.b.toString();
+      }
+    }
+
+    else {
+      if(form.value.type != 'B') {
         this.showWrong = true;
         this.wrongStatement = 'The Perceptron incorrectly classifies the' +
           ' data point as A, so the parameters are updated as follows: ';
@@ -203,29 +227,6 @@ export class ChartComponent implements OnInit {
         this.W[0] += this.alpha*form.value.x;
         this.W[1] += this.alpha*form.value.y;
         this.b += this.alpha;
-        changed = true;
-
-        this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
-        this.wrongb = this.wrongb + this.b.toString();
-      }
-    }
-
-    else {
-      if(form.value.type != 'B') {
-        this.showWrong = true;
-        this.wrongStatement = 'The Perceptron incorrectly classifies the' +
-          ' data point as B, so the parameters are updated as follows: ';
-
-        this.wrongW = 'W = W + \u03B1*X*(-1) = [' + this.W.toString() + '] - ' +
-          this.alpha.toString() + '*' + '[' + form.value.x.toString() + ','
-          + form.value.y.toString() + '] = ';
-
-        this.wrongb = 'b = b + \u03B1*1*(-1) = ' + this.b.toString() + ' - ' +
-          this.alpha.toString() + ' = ';
-
-        this.W[0] -= this.alpha*form.value.x;
-        this.W[1] -= this.alpha*form.value.y;
-        this.b -= this.alpha;
         changed = true;
 
         this.wrongW = this.wrongW + '[' + this.W.toString() + ']';
