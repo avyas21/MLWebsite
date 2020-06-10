@@ -120,10 +120,9 @@ export class ChartComponent implements OnInit {
   updateBoundary() {
     this.scatterChartData[2].data = [];
     const data: object[] = this.scatterChartData[2].data as object[];
-    var i;
-    for(i = this.min; i <= this.max; ++i) {
+    for(var i = this.min; i <= this.max; ++i) {
       var x2;
-      if(this.W[1]) {
+      if(this.W[1] != 0) {
         x2 = ((-1*this.b)-(this.W[0]*i))/this.W[1];
       }
       else {
@@ -189,10 +188,9 @@ export class ChartComponent implements OnInit {
 
     if(calc >= 0) {
       if(form.value.type != 'A') {
-
         this.showWrong = true;
         this.wrongStatement = 'The Perceptron incorrectly classifies the' +
-          ' data point as A, so the parameters are updated as follows: ';
+          ' data point as B, so the parameters are updated as follows: ';
 
         this.wrongW = 'W = W + \u03B1*X*(-1) = [' + this.W.toString() + '] - ' +
           this.alpha.toString() + '*' + '[' + form.value.x.toString() + ','
