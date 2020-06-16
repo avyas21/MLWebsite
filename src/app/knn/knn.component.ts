@@ -211,11 +211,11 @@ export class KnnComponent implements OnInit {
         return;
       }
 
-      const valid_regex = /^\([0-9]+\.?[0-9]*,[0-9]+\.?[0-9]*?,[AB]\)$/;;
+      const valid_regex = /^\(-?[0-9]+\.?[0-9]*,-?[0-9]+\.?[0-9]*,[AB]\)$/;;
       var points_exist = false;
 
       var points = form.value.points.replace(/\s+/g,'');
-      points = points.replace(/[^()0-9AB,\.;]/g,'');
+      points = points.replace(/[^()0-9AB,\.;-]/g,'');
       points = points.split(';');
 
 

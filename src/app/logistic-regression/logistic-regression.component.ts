@@ -192,7 +192,7 @@ export class LogisticRegressionComponent implements OnInit {
       return;
     }
 
-    const valid_regex = /\([0-9]+\.?[0-9]*,[0-9]+\.?[0-9]*?,[AB]\)$/;
+    const valid_regex = /^\(-?[0-9]+\.?[0-9]*,-?[0-9]+\.?[0-9]*,[AB]\)$/;
     var points_exist = false;
 
     var points = form.value.points.replace(/\s+/g,'');

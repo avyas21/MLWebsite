@@ -146,7 +146,7 @@ export class KmeansComponent implements OnInit {
         return;
       }
 
-      const valid_regex = /\([0-9]+\.?[0-9]*,[0-9]+\.?[0-9]*?\)$/;
+      const valid_regex = /^\(-?[0-9]+\.?[0-9]*,-?[0-9]+\.?[0-9]*\)$/;
       var points_exist = false;
 
       var points = form.value.points.replace(/\s+/g,'');

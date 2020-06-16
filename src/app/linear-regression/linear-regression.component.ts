@@ -40,7 +40,7 @@ export class LinearRegressionComponent implements OnInit {
   ];
 
   public scatterChartColors:Array<any> = [
-    { 
+    {
       backgroundColor: 'rgba(100,0,0,0.9)',
       borderColor: 'rgba(148,159,177,1)',
       pointBackgroundColor: 'rgba(100,0,0,0.9)',
@@ -142,7 +142,7 @@ export class LinearRegressionComponent implements OnInit {
       return;
     }
 
-    const valid_regex = /\([0-9]+\.?[0-9]*,[0-9]+\.?[0-9]*?\)$/;
+    const valid_regex = /^\(-?[0-9]+\.?[0-9]*,-?[0-9]+\.?[0-9]*\)$/;
     var points_exist = false;
 
     var points = form.value.points.replace(/\s+/g,'');
