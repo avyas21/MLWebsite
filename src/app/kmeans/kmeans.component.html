@@ -10,8 +10,9 @@
   <button type="submit"> Submit </button>
 </form>
 
-<button *ngIf = "gotParameters" class = "step" (click) = "step()">Step</button>
-<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button> <br/>
+<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
+<button *ngIf = "gotParameters" class = "step" (click) = "step()">Step</button> <br/>
+
 
 <form id="parameterForm" *ngIf = "gotParameters" #timeForm="ngForm" (ngSubmit)="Step(timeForm)" action = "">
   <label for="steps">Number of Steps: </label>
