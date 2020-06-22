@@ -1,1 +1,47 @@
-<p>decision-tree works!</p>
+<form *ngIf = "!gotParameters" #addForm="ngForm" (ngSubmit)="addTrainPoint(addForm)" action = "">
+
+  <label for="color1">Primary Color: </label>
+  <select id="color1"
+          ngModel name="color1" required>
+    <option *ngFor="let type of primaryColors" [value]="type">{{type}}</option>
+  </select>
+
+  <label for="color2">Secondary Color: </label>
+  <select id="color2"
+          ngModel name="color2" required>
+    <option *ngFor="let type of secondaryColors" [value]="type">{{type}}</option>
+  </select>
+
+  <label for="color3">Result Color: </label>
+  <select id="color3"
+          ngModel name="color3" required>
+    <option *ngFor="let type of resultingColors" [value]="type">{{type}}</option>
+  </select>
+
+  &nbsp;
+
+  <button type="submit"> Add Point </button>
+
+</form>
+
+<button *ngIf = "!gotParameters" class = "submit" (click) = "makeDecisionTree()">Make Tree</button>
+
+<form *ngIf = "gotParameters" #addForm="ngForm" (ngSubmit)="evaluatePoint(addForm)" action = "">
+
+  <label for="color1">Primary Color: </label>
+  <select id="color1"
+          ngModel name="color1" required>
+    <option *ngFor="let type of primaryColors" [value]="type">{{type}}</option>
+  </select>
+
+  <label for="color2">Secondary Color: </label>
+  <select id="color2"
+          ngModel name="color2" required>
+    <option *ngFor="let type of secondaryColors" [value]="type">{{type}}</option>
+  </select>
+
+  &nbsp;
+
+  <button type="submit"> Predict </button>
+
+</form>

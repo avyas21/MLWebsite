@@ -54,6 +54,7 @@ export class DecisionTree {
 
   constructor(attributes, labels, num_classes, attribute_values) {
     this.parent = null;
+    this.buildTree(attributes, labels, num_classes, attribute_values);
   }
 
   buildTree(attributes, labels, num_classes, attribute_values) {
@@ -70,15 +71,24 @@ export class DecisionTree {
     var bestGainRatio = -1 * Infinity;
     var bestInformationGain = -1 * Infinity;
 
+    console.log(Object.keys(attributes[0]));
+
     for(var i in Object.keys(attributes[0])) {
+      var attribute =  Object.keys(attributes[0])[i];
+      console.log(attribute);
       var conditionalInfo = 0;
       var attributeCount = {};
 
-      for (var j in attribute_values[i]) {
-        var data = attributes.map(x => x[i]);
-        var ids = segregate(data,j);
-        attributeCount[j] = ids.length;
-        conditionalInfo += attributeCount[j] * computeEntropy(filter(labels, ids), num_classes);
+      for (var j in attribute_values[attribute]) {
+        var value = attribute_values[attribute][j];
+        console.log(value);
+        var data = attributes.map(x => x[attribute]);
+        var ids = segregate(data,value);
+
+        attributeCount[value] = ids.length;
+        conditionalInfo += attributeCount[value] * computeEntropy(filter(labels, ids), num_classes);
+
+
       }
 
       var attributeInformationGain = node_information - conditionalInfo;
@@ -86,7 +96,7 @@ export class DecisionTree {
       if(gainRatio > bestGainRatio) {
         bestInformationGain = attributeInformationGain;
         bestGainRatio = gainRatio;
-        bestAttribute = i;
+        bestAttribute = attribute;
       }
     }
 
@@ -100,13 +110,25 @@ export class DecisionTree {
     this.nodeGainInformation = bestInformationGain;
 
     for(var i in attribute_values[bestAttribute]) {
+      var value = attribute_values[bestAttribute][i];
       var data = attributes.map(x => x[bestAttribute]);
-      var ids = segregate(data, i);
-      this.children[i] = new DecisionTree(filter(attributes, ids),
+      var ids = segregate(data, attribute);
+      this.children[value] = new DecisionTree(filter(attributes, ids),
         filter(labels, ids), num_classes, attribute_values);
-      this.children[i].parent = this;
+      this.children[value].parent = this;
     }
     return;
 
+  }
+
+  evaluate(testAttributes) {
+    if(this.isLeaf) {
+      return this.majorityClass;
+    }
+
+    else {
+      console.log(this.bestAttribute);
+      return this.children[testAttributes[this.bestAttribute]].evaluate(testAttributes);
+    }
   }
 }
