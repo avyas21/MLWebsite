@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { DecisionTree, mostFrequentlyOccuringValue, computeEntropy, segregate }
- from '../decisiontree';
+import { DecisionTree } from '../decisiontree';
 
 @Component({
   selector: 'app-decision-tree',
@@ -19,13 +18,22 @@ export class DecisionTreeComponent implements OnInit {
   model: DecisionTree;
   gotParameters = false;
 
+  showResult = false;
+  result = "";
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  resetData() {
+    this.attributes = [];
+    this.labels = [];
+    this.showResult = false;
+    this.gotParameters = false;
+    this.result = "";
+  }
+
   addTrainPoint(form: NgForm) {
-    console.log(form.value);
     if(form.value.color1 == "" || form.value.color2 == "" || form.value.color3 == "") {
       alert("Please enter all input fields");
       return;
@@ -33,15 +41,21 @@ export class DecisionTreeComponent implements OnInit {
 
     this.attributes.push({primaryColor: form.value.color1, secondaryColor: form.value.color2});
     this.labels.push(form.value.color3);
+    form.reset();
   }
 
   evaluatePoint(form: NgForm) {
-    if(form.value.color1 == "" || form.value.color2 == "" || form.value.color3 == "") {
+    if(form.value.primaryColor == "" || form.value.secondaryColor == "" ) {
       alert("Please enter all input fields");
       return;
     }
-    var result = this.model.evaluate(form.value);
-    console.log(result);
+
+    this.showResult = true;
+    this.result = "From the Decision Tree, a Primary Color of "
+      + form.value.primaryColor + " and a Secondary Color of "
+      + form.value.secondaryColor + " gives a Resulting Color of "
+      + this.model.evaluate(form.value).toString();
+    form.reset();
   }
 
   makeDecisionTree() {
@@ -56,8 +70,7 @@ export class DecisionTreeComponent implements OnInit {
       alert("Please Add " + left.toString() + " more Points");
       return;
     }
-    this.model = new DecisionTree(this.attributes, this.labels, 3, this.attribute_values);
-    console.log(this.model);
+    this.model = new DecisionTree(this.attributes, this.labels, this.resultingColors, this.attribute_values);
     this.gotParameters = true;
   }
 }

@@ -26,17 +26,19 @@
 
 <button *ngIf = "!gotParameters" class = "submit" (click) = "makeDecisionTree()">Make Tree</button>
 
+<button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
+
 <form *ngIf = "gotParameters" #addForm="ngForm" (ngSubmit)="evaluatePoint(addForm)" action = "">
 
-  <label for="color1">Primary Color: </label>
-  <select id="color1"
-          ngModel name="color1" required>
+  <label for="primaryColor">Primary Color: </label>
+  <select id="primaryColor"
+          ngModel name="primaryColor" required>
     <option *ngFor="let type of primaryColors" [value]="type">{{type}}</option>
   </select>
 
-  <label for="color2">Secondary Color: </label>
-  <select id="color2"
-          ngModel name="color2" required>
+  <label for="secondaryColor">Secondary Color: </label>
+  <select id="secondaryColor"
+          ngModel name="secondaryColor" required>
     <option *ngFor="let type of secondaryColors" [value]="type">{{type}}</option>
   </select>
 
@@ -45,3 +47,8 @@
   <button type="submit"> Predict </button>
 
 </form>
+
+
+<div *ngIf="showResult">
+{{result}}
+</div>
