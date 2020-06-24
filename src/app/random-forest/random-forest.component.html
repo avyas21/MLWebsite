@@ -63,4 +63,12 @@
 {{result2}}
 </div>
 
-<canvas *ngIf = "gotParameters" id="tutorial" width="150" height="150"></canvas>
+<div *ngIf = "showResult" style="display: block; width: 1000px;">
+  <canvas baseChart
+    [labels] = "barChartLabel"
+    [datasets]="barChartData"
+    [colors]="barChartColors"
+    [options]="barChartOptions"
+    [chartType]="barChartType">
+  </canvas>
+</div>

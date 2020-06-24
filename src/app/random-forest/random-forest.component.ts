@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RandomForest } from '../decisiontree';
+import { Label } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
+import { ChartDataSets, ChartType, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-random-forest',
@@ -26,6 +29,32 @@ export class RandomForestComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public barChartLabel: Label = ['Results'];
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+  };
+
+  public barChartData: ChartDataSets[] = [
+    { data: [], label: 'Red'},
+    { data: [], label: 'Orange'},
+    { data: [], label: 'Green'},
+    { data: [], label: 'Yellow'},
+    { data: [], label: 'Purple'},
+    { data: [], label: 'Blue'},
+  ];
+
+  public barChartColors:Array<any> = [
+    { backgroundColor: 'rgba(244,48,30,0.9)'},
+    { backgroundColor: 'rgba(244,208,30,0.9)'},
+    { backgroundColor: 'rgba(91,244,30,0.9)'},
+    { backgroundColor: 'rgba(240,244,30,0.9)'},
+    { backgroundColor: 'rgba(155,30,244,0.9)'},
+    { backgroundColor: 'rgba(52,30,244,0.9)'},
+  ];
+
+  public barChartType: ChartType = 'bar';
+
   resetData() {
     this.attributes = [];
     this.labels = [];
@@ -47,12 +76,33 @@ export class RandomForestComponent implements OnInit {
   }
 
   evaluatePoint(form: NgForm) {
+    this.barChartData = [
+      { data: [], label: 'Red'},
+      { data: [], label: 'Orange'},
+      { data: [], label: 'Green'},
+      { data: [], label: 'Yellow'},
+      { data: [], label: 'Purple'},
+      { data: [], label: 'Blue'},
+    ];
+
     if(form.value.primaryColor == "" || form.value.secondaryColor == "" ) {
       alert("Please enter all input fields");
       return;
     }
 
     var results = this.model.evaluate(form.value);
+    var data  = {red: 0,orange:0,green:0,yellow:0,purple:0,blue:0};
+
+    for(var i =0; i < results.length; ++i) {
+      data[results[i]] += 1;
+    }
+
+    for(var i = 0; i < Object.values(data).length; ++i) {
+      this.barChartData[i].data.push(Object.values(data)[i]);
+    }
+
+    console.log(this.barChartData);
+
     this.showResult = true;
     this.result = "From the Random Forest, a Primary Color of "
       + form.value.primaryColor + " and a Secondary Color of "
