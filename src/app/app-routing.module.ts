@@ -11,6 +11,7 @@ import { KmeansComponent } from './kmeans/kmeans.component';
 import { KnnComponent } from './knn/knn.component';
 import { SVMComponent } from './svm/svm.component';
 import { DecisionTreeComponent } from './decision-tree/decision-tree.component';
+import { RandomForestComponent } from './random-forest/random-forest.component';
 
 const routes: Routes = [
   { path: 'machinelearning', component: MachinelearningComponent },
@@ -24,7 +25,8 @@ const routes: Routes = [
   { path: 'machinelearning/knn', component: KnnComponent },
   { path: 'machinelearning/kmeans', component: KmeansComponent },
   { path: 'machinelearning/svm', component: SVMComponent},
-  { path: 'machinelearning/decisiontree', component: DecisionTreeComponent}
+  { path: 'machinelearning/decisiontree', component: DecisionTreeComponent},
+  { path: 'machinelearning/randomforest', component: RandomForestComponent}
 ];
 
 @NgModule({

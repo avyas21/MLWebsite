@@ -1,33 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { DecisionTree } from '../decisiontree';
+import { RandomForest } from '../decisiontree';
 
 @Component({
-  selector: 'app-decision-tree',
-  templateUrl: './decision-tree.component.html',
-  styleUrls: ['./decision-tree.component.css']
+  selector: 'app-random-forest',
+  templateUrl: './random-forest.component.html',
+  styleUrls: ['./random-forest.component.css']
 })
-export class DecisionTreeComponent implements OnInit {
-
+export class RandomForestComponent implements OnInit {
   attributes = [];
   labels = [];
   resultingColors = ['red','orange','green','yellow','purple','blue'];
   primaryColors = ['red','yellow','blue'];
   secondaryColors = ['red','yellow','blue'];
   attribute_values = {primaryColor: ['red','yellow','blue'], secondaryColor: ['red','yellow','blue']};
-  model: DecisionTree;
+  model: RandomForest;
   gotParameters = false;
 
   showResult = false;
   result = "";
-
-  // canvas = <HTMLCanvasElement> document.getElementById('tutorial');
-  // ctx = this.canvas.getContext('2d');
+  result2 = "";
 
   constructor() { }
 
   ngOnInit(): void {
-
   }
 
   resetData() {
@@ -36,6 +32,7 @@ export class DecisionTreeComponent implements OnInit {
     this.showResult = false;
     this.gotParameters = false;
     this.result = "";
+    this.result2 = "";
   }
 
   addTrainPoint(form: NgForm) {
@@ -55,15 +52,25 @@ export class DecisionTreeComponent implements OnInit {
       return;
     }
 
+    var results = this.model.evaluate(form.value);
     this.showResult = true;
-    this.result = "From the Decision Tree, a Primary Color of "
+    this.result = "From the Random Forest, a Primary Color of "
       + form.value.primaryColor + " and a Secondary Color of "
-      + form.value.secondaryColor + " gives a Resulting Color of "
-      + this.model.evaluate(form.value).toString();
+      + form.value.secondaryColor + " gives Resulting Colors of ["
+      + results.toString() + "]";
+
+    this.result2 = "The mode of the results is " + this.model.classify(results);
+
     form.reset();
   }
 
-  makeDecisionTree() {
+  makeRandomForest(form: NgForm) {
+    if(form.value.trees == "" || form.value.sample == ""
+      || form.value.trees == null || form.value.sample == null) {
+        alert("Please enter all input fields");
+        return;
+      }
+
     this.attributes = [{primaryColor: 'red', secondaryColor: 'red'},
   {primaryColor: 'red', secondaryColor: 'blue'},
   {primaryColor: 'red', secondaryColor: 'yellow'}];
@@ -75,12 +82,9 @@ export class DecisionTreeComponent implements OnInit {
       alert("Please Add " + left.toString() + " more Points");
       return;
     }
-    this.model = new DecisionTree(this.attributes, this.labels, this.resultingColors, this.attribute_values);
+    this.model = new RandomForest(form.value.trees, form.value.sample,
+      this.attributes, this.labels, this.resultingColors, this.attribute_values);
     this.gotParameters = true;
   }
 
-
-  // drawDecisionTree() {
-  //   this.ctx.fillRect(25, 25, 100, 100);
-  // }
 }

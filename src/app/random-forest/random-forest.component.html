@@ -21,10 +21,19 @@
   &nbsp;
 
   <button type="submit"> Add Point </button>
-
 </form>
 
-<button *ngIf = "!gotParameters" class = "submit" (click) = "makeDecisionTree()">Make Tree</button>
+<form *ngIf = "!gotParameters" #makeForest="ngForm" (ngSubmit)="makeRandomForest(makeForest)" action = "">
+  <br/>
+  <label for="trees">Num Trees: </label>
+  <input type="number" ngModel id="trees" name="trees">
+
+  <label for="sample">Sample Size: </label>
+  <input type="number" ngModel id = "sample" name="sample">
+
+  <button type="submit"> Make Forest </button>
+</form>
+
 
 <button *ngIf = "gotParameters" class = "reset" (click) = "resetData()">Reset</button>
 
@@ -50,7 +59,8 @@
 
 
 <div *ngIf="showResult">
-{{result}}
+{{result}} <br/>
+{{result2}}
 </div>
 
 <canvas *ngIf = "gotParameters" id="tutorial" width="150" height="150"></canvas>

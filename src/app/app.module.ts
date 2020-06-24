@@ -18,6 +18,7 @@ import { KmeansComponent } from './kmeans/kmeans.component';
 import { KnnComponent } from './knn/knn.component';
 import { SVMComponent } from './svm/svm.component';
 import { DecisionTreeComponent } from './decision-tree/decision-tree.component';
+import { RandomForestComponent } from './random-forest/random-forest.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { DecisionTreeComponent } from './decision-tree/decision-tree.component';
     KmeansComponent,
     KnnComponent,
     SVMComponent,
-    DecisionTreeComponent
+    DecisionTreeComponent,
+    RandomForestComponent
   ],
   imports: [
     BrowserModule,

@@ -147,3 +147,57 @@ export class DecisionTree {
     }
   }
 }
+
+
+export class RandomForest {
+  trees: DecisionTree[] = [];
+  constructor(num_trees, sample_size, attributes, labels, label_values, attribute_values) {
+    for(var i  = 0; i < num_trees; ++i) {
+      var sampled_attributes = [];
+      var sampled_labels = [];
+      for(var j = 0; j < sample_size; ++j) {
+        var index = Math.floor(Math.random()*attributes.length);
+        sampled_labels.push(labels[index]);
+        sampled_attributes.push(attributes[index]);
+      }
+
+      this.trees.push(new DecisionTree(sampled_attributes, sampled_labels,
+        label_values, attribute_values));
+    }
+
+  }
+
+  evaluate(testAttributes) {
+    var results = [];
+    for(var i = 0; i < this.trees.length; ++i) {
+      results.push(this.trees[i].evaluate(testAttributes));
+    }
+
+    return results;
+  }
+
+  classify(results) {
+    var counts = {};
+    for(var i = 0; i < results.length; ++i) {
+      if(results[i] in counts) {
+        counts[results[i]] += 1;
+      }
+      else {
+        counts[results[i]] = 1;
+      }
+    }
+
+    var max = Object.keys(counts)[0];
+    var max_count = counts[max];
+
+    for(var i = 1; i < Object.keys(counts).length; ++i) {
+      var max_i = counts[Object.keys(counts)[i]];
+      if(max_i > max_count) {
+        max = Object.keys(counts)[i];
+        max_count = max_i;
+      }
+    }
+
+    return max;
+  }
+}
