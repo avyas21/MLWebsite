@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { DecisionTree } from '../decisiontree';
 
@@ -7,7 +7,10 @@ import { DecisionTree } from '../decisiontree';
   templateUrl: './decision-tree.component.html',
   styleUrls: ['./decision-tree.component.css']
 })
-export class DecisionTreeComponent implements OnInit {
+export class DecisionTreeComponent implements AfterViewInit{
+
+  private context: CanvasRenderingContext2D;
+  @ViewChild('canvas') canvas: ElementRef;
 
   attributes = [];
   labels = [];
@@ -21,12 +24,10 @@ export class DecisionTreeComponent implements OnInit {
   showResult = false;
   result = "";
 
-  // canvas = <HTMLCanvasElement> document.getElementById('tutorial');
-  // ctx = this.canvas.getContext('2d');
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngAfterViewInit() {
 
   }
 
@@ -61,6 +62,15 @@ export class DecisionTreeComponent implements OnInit {
       + form.value.secondaryColor + " gives a Resulting Color of "
       + this.model.evaluate(form.value).toString();
     form.reset();
+
+  }
+
+  drawModel() {
+
+    this.context = (this.canvas.nativeElement as HTMLCanvasElement).getContext('2d');
+    this.context.strokeRect(0, 0, this.canvas.nativeElement.width,
+      this.canvas.nativeElement.height);
+    this.context.fillRect(50,50,50,50);
   }
 
   makeDecisionTree() {
@@ -77,10 +87,7 @@ export class DecisionTreeComponent implements OnInit {
     }
     this.model = new DecisionTree(this.attributes, this.labels, this.resultingColors, this.attribute_values);
     this.gotParameters = true;
+    this.drawModel();
   }
 
-
-  // drawDecisionTree() {
-  //   this.ctx.fillRect(25, 25, 100, 100);
-  // }
 }

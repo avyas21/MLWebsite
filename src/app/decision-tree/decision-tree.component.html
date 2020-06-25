@@ -53,4 +53,6 @@
 {{result}}
 </div>
 
-<canvas *ngIf = "gotParameters" id="tutorial" width="150" height="150"></canvas>
+<div [hidden]="!gotParameters">
+  <canvas #canvas width="600" height="300"></canvas>
+</div>

@@ -70,7 +70,7 @@ export class DecisionTree {
   majorityClass: number;
   bestAttribute: number;
   parent: DecisionTree;
-  children: {[attribute: string]: DecisionTree; } = { };
+  public children: {[attribute: string]: DecisionTree; } = { };
 
 
   constructor(attributes, labels, label_values, attribute_values) {
