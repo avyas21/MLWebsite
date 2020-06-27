@@ -66,9 +66,9 @@ export function mostFrequentlyOccuringValue(labels,label_values) {
 export class DecisionTree {
   nodeGainRatio: number;
   nodeGainInformation: number;
-  isLeaf: boolean;
-  majorityClass: number;
-  bestAttribute: number;
+  public isLeaf: boolean;
+  public majorityClass: number;
+  public bestAttribute: number;
   parent: DecisionTree;
   public children: {[attribute: string]: DecisionTree; } = { };
 
@@ -140,6 +140,10 @@ export class DecisionTree {
   evaluate(testAttributes) {
     if(this.isLeaf) {
       return this.majorityClass;
+    }
+
+    else if(this.bestAttribute == null) {
+      return null;
     }
 
     else {

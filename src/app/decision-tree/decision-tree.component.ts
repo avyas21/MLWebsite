@@ -37,6 +37,7 @@ export class DecisionTreeComponent implements AfterViewInit{
     this.showResult = false;
     this.gotParameters = false;
     this.result = "";
+    this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
   }
 
   addTrainPoint(form: NgForm) {
@@ -57,11 +58,18 @@ export class DecisionTreeComponent implements AfterViewInit{
     }
 
     this.showResult = true;
+    this.result = "There is no pure separation of data for a Primary Color of "
+    + form.value.primaryColor + " and a Secondary Color of "
+    + form.value.secondaryColor + " so the point is classified as null";
+
+    var sol = this.model.evaluate(form.value);
+    if(sol != null) {
     this.result = "From the Decision Tree, a Primary Color of "
       + form.value.primaryColor + " and a Secondary Color of "
       + form.value.secondaryColor + " gives a Resulting Color of "
-      + this.model.evaluate(form.value).toString();
+      + sol.toString();
     form.reset();
+    }
 
   }
 
@@ -70,15 +78,49 @@ export class DecisionTreeComponent implements AfterViewInit{
     this.context = (this.canvas.nativeElement as HTMLCanvasElement).getContext('2d');
     this.context.strokeRect(0, 0, this.canvas.nativeElement.width,
       this.canvas.nativeElement.height);
-    this.context.fillRect(50,50,50,50);
+    this.context.setLineDash([10, 5]);
+    this.drawNodes(this.canvas.nativeElement.width/2 - 25 ,50, this.model, 50);
+
+  }
+
+  drawNodes(x,y,node,size) {
+
+    if(node.isLeaf) {
+      this.context.fillStyle = node.majorityClass;
+      this.context.fillRect(x,y,size,size);
+      this.context.font = "12px Arial";
+      this.context.fillText(node.majorityClass, x, y);
+      return;
+    }
+
+    this.context.fillStyle = 'black';
+    this.context.fillRect(x,y,size, size);
+
+    this.context.font = "12px Arial";
+    this.context.fillText(node.bestAttribute, x, y);
+
+
+    var xpos = x-(4*size) + size/4;
+    for(var i = 0; i < Object.keys(node.children).length; ++i) {
+      this.drawNodes(xpos, y+100, Object.values(node.children)[i], size/Math.sqrt(2));
+
+      this.context.moveTo(x+size/2, y+size/2);
+      this.context.lineTo(xpos + size/4, y+100);
+      this.context.stroke();
+      this.context.fillStyle = "black";
+      this.context.fillText(Object.keys(node.children)[i], (x+xpos+size/2+size/4)/2, y + size/4 + 50);
+
+      xpos += 4*size;
+    }
+
   }
 
   makeDecisionTree() {
-    this.attributes = [{primaryColor: 'red', secondaryColor: 'red'},
-  {primaryColor: 'red', secondaryColor: 'blue'},
-  {primaryColor: 'red', secondaryColor: 'yellow'}];
-
-    this.labels = ['red', 'purple', 'green'];
+  //   this.attributes = [{primaryColor: 'red', secondaryColor: 'red'},
+  // {primaryColor: 'red', secondaryColor: 'blue'},
+  // {primaryColor: 'red', secondaryColor: 'yellow'}];
+  //
+  //   this.labels = ['red', 'purple', 'green'];
 
     if(this.attributes.length < 3) {
       var left = 3 - this.attributes.length;
