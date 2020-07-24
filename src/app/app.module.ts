@@ -19,6 +19,7 @@ import { KnnComponent } from './knn/knn.component';
 import { SVMComponent } from './svm/svm.component';
 import { DecisionTreeComponent } from './decision-tree/decision-tree.component';
 import { RandomForestComponent } from './random-forest/random-forest.component';
+import { CNNComponent } from './cnn/cnn.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RandomForestComponent } from './random-forest/random-forest.component';
     KnnComponent,
     SVMComponent,
     DecisionTreeComponent,
-    RandomForestComponent
+    RandomForestComponent,
+    CNNComponent
   ],
   imports: [
     BrowserModule,
