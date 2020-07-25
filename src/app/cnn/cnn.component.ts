@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as tf from '@tensorflow/tfjs';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-cnn',
@@ -10,12 +11,20 @@ export class CNNComponent implements AfterViewInit {
   private context: CanvasRenderingContext2D;
   @ViewChild('canvas') canvas: ElementRef;
 
+  isLayerSelected = false;
+  selectedLayer = -1;
+  inputChannel = 1;
+  outputChannel = 1;
+  maxInp = 0;
+  maxOut = 0;
+  showConv = false;
+  showPooling = false;
+
   constructor() { }
 
   ngAfterViewInit(): void {
     this.context = (this.canvas.nativeElement as HTMLCanvasElement).getContext('2d');
     this.visualizeLayers();
-    console.log(this.model.layers);
   }
 
   model = tf.sequential({
@@ -45,6 +54,8 @@ export class CNNComponent implements AfterViewInit {
     })
    ]
   });
+
+  originalModel = this.model;
 
   visualizeLayers() {
     this.canvas.nativeElement.width = 500;
@@ -76,5 +87,99 @@ export class CNNComponent implements AfterViewInit {
 
   }
 
+  showLayer(form: NgForm) {
+    if(typeof(form.value.k) == 'string' || form.value.k == null) {
+      alert('Invalid Input. Enter all fields');
+      return;
+    }
 
+    if(form.value.k < 0 || form.value.k >= this.model.layers.length) {
+      alert('Enter Valid Layer Number between 0 and '
+        + (this.model.layers.length-1).toString());
+      return;
+    }
+
+    this.selectedLayer = form.value.k;
+    this.isLayerSelected = true;
+
+    this.showLayerInfo(this.selectedLayer);
+    return;
+  }
+
+  showConv2d(layer_num, inp, out) {
+    var arr = this.model.layers[layer_num].getWeights()[0].arraySync();
+    var dimensions = this.model.layers[layer_num].getWeights()[0].shape;
+    this.maxInp = dimensions[2];
+    this.maxOut = dimensions[3];
+    this.showConv = true;
+    var string = '';
+    string += '-----------------------------------------\n';
+    for(var i = 0; i < dimensions[0]; ++i) {
+      for(var j = 0; j < dimensions[1]; ++j) {
+        string += '| ' + arr[i][j][inp][out].toFixed(2).toString().padStart(5,'+') + ' ';
+      }
+        string += '|\n';
+    }
+    string += '-----------------------------------------\n';
+    return string;
+  }
+
+  showPooling2d(layer_num) {
+
+  }
+
+  showLayerInfo(layer_num) {
+    this.showConv = false;
+    this.showPooling = false;
+    if(this.model.layers[layer_num].name.startsWith('conv2d')) {
+      this.showConv2d(layer_num, 0, 0);
+      return;
+    }
+
+    if(this.model.layers[layer_num].name.startsWith('max_pooling2d')) {
+      this.showPooling = true;
+      return;
+    }
+  }
+
+  resetModel() {
+    this.model = this.originalModel;
+    return;
+  }
+
+
+  changeWeight(form: NgForm) {
+    if(typeof(form.value.row) == 'string' || form.value.row == null
+      || typeof(form.value.col) == 'string' || form.value.col == null
+      || typeof(form.value.val) == 'string' || form.value.val == null) {
+      alert('Invalid Input. Enter all fields');
+      return;
+    }
+
+    var dimensions =this.model.layers[this.selectedLayer].getWeights()[0].shape;
+    console.log(this.model.layers[this.selectedLayer].getWeights());
+    if(form.value.row < 1 ||
+      form.value.row > dimensions[1]) {
+      alert('Enter Valid Row Number between 1 and '
+        + dimensions[1].toString());
+      return;
+    }
+
+    if(form.value.col < 1 ||
+      form.value.col > dimensions[0]) {
+      alert('Enter Valid Col Number between 1 and '
+        + dimensions[0].toString());
+      return;
+    }
+
+    var arr = this.model.layers[this.selectedLayer].getWeights()[0].arraySync();
+    var bias = this.model.layers[this.selectedLayer].getWeights()[1].arraySync();
+
+    arr[form.value.row-1][form.value.col-1]
+      [this.inputChannel-1][this.outputChannel-1] = form.value.val;
+
+    this.model.layers[this.selectedLayer].setWeights([tf.tensor(arr),tf.tensor(bias)]);
+
+    console.log(this.model.layers[this.selectedLayer].getWeights());
+  }
 }
