@@ -38,7 +38,7 @@ import { CNNComponent } from './cnn/cnn.component';
     SVMComponent,
     DecisionTreeComponent,
     RandomForestComponent,
-    CNNComponent
+    CNNComponent,
   ],
   imports: [
     BrowserModule,

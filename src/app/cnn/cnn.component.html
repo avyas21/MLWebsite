@@ -1,15 +1,16 @@
-<form id="layerForm" #layerForm="ngForm" (ngSubmit)="showLayer(layerForm)" action = "">
-
-  <label for="k">See Layer: </label>
-  <input type="number" id="k"
-         ngModel name="k" required>
-
-  <button type="submit"> Submit </button>
-</form>
-
 <div>
   <canvas #canvas></canvas>
 </div>
+
+<div class="slidecontainer">
+  <label>Layer: </label>
+  <input type="range" min="0" max="{{model.layers.length-1}}"
+  value="0" class="slider" [(ngModel)]="selectedLayer"
+             ngModel (change)="showLayerInfo(selectedLayer)">
+  {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
+</div>
+
+
 
 <div *ngIf = "showConv" class="slidecontainer">
   <label>Input Channel: </label>
@@ -45,6 +46,12 @@
   <button type="submit"> Change Weight </button>
 </form>
 
-<div *ngIf = "showConv" class="white-space-pre-line">
+<div *ngIf = "showConv &&
+this.model.layers[selectedLayer].name.startsWith('conv2d')"
+class="white-space-pre-line">
 {{showConv2d(selectedLayer,inputChannel-1,outputChannel-1)}}
+</div>
+
+<div *ngIf = "showPooling">
+{{showPooling2d(selectedLayer)}}
 </div>

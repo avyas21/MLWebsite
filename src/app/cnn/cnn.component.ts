@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import * as tf from '@tensorflow/tfjs';
 import { NgForm } from '@angular/forms';
 
@@ -12,7 +12,7 @@ export class CNNComponent implements AfterViewInit {
   @ViewChild('canvas') canvas: ElementRef;
 
   isLayerSelected = false;
-  selectedLayer = -1;
+  selectedLayer = 0;
   inputChannel = 1;
   outputChannel = 1;
   maxInp = 0;
@@ -20,7 +20,6 @@ export class CNNComponent implements AfterViewInit {
   showConv = false;
   showPooling = false;
 
-  constructor() { }
 
   ngAfterViewInit(): void {
     this.context = (this.canvas.nativeElement as HTMLCanvasElement).getContext('2d');
@@ -84,27 +83,8 @@ export class CNNComponent implements AfterViewInit {
       this.context.fillText(shapes, 125, y+35);
       y += 50;
     }
-
   }
 
-  showLayer(form: NgForm) {
-    if(typeof(form.value.k) == 'string' || form.value.k == null) {
-      alert('Invalid Input. Enter all fields');
-      return;
-    }
-
-    if(form.value.k < 0 || form.value.k >= this.model.layers.length) {
-      alert('Enter Valid Layer Number between 0 and '
-        + (this.model.layers.length-1).toString());
-      return;
-    }
-
-    this.selectedLayer = form.value.k;
-    this.isLayerSelected = true;
-
-    this.showLayerInfo(this.selectedLayer);
-    return;
-  }
 
   showConv2d(layer_num, inp, out) {
     var arr = this.model.layers[layer_num].getWeights()[0].arraySync();
@@ -125,13 +105,17 @@ export class CNNComponent implements AfterViewInit {
   }
 
   showPooling2d(layer_num) {
-
+    return "THIS IS A POOLONG :AEIT";
   }
 
   showLayerInfo(layer_num) {
+    console.log("!: " + this.model.layers[layer_num].name);
     this.showConv = false;
     this.showPooling = false;
+
+
     if(this.model.layers[layer_num].name.startsWith('conv2d')) {
+      console.log("2: " + this.model.layers[layer_num].name);
       this.showConv2d(layer_num, 0, 0);
       return;
     }
@@ -157,7 +141,6 @@ export class CNNComponent implements AfterViewInit {
     }
 
     var dimensions =this.model.layers[this.selectedLayer].getWeights()[0].shape;
-    console.log(this.model.layers[this.selectedLayer].getWeights());
     if(form.value.row < 1 ||
       form.value.row > dimensions[1]) {
       alert('Enter Valid Row Number between 1 and '
@@ -180,6 +163,5 @@ export class CNNComponent implements AfterViewInit {
 
     this.model.layers[this.selectedLayer].setWeights([tf.tensor(arr),tf.tensor(bias)]);
 
-    console.log(this.model.layers[this.selectedLayer].getWeights());
   }
 }
