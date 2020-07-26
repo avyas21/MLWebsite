@@ -12,7 +12,9 @@
 
 
 
-<div *ngIf = "showConv" class="slidecontainer">
+<div *ngIf =
+"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+class="slidecontainer">
   <label>Input Channel: </label>
   <input type="range" min="1" max="{{maxInp}}"
   value="1" class="slider" [(ngModel)]="inputChannel"
@@ -20,7 +22,9 @@
   {{inputChannel}}
 </div>
 
-<div *ngIf = "showConv" class="slidecontainer">
+<div *ngIf =
+"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+class="slidecontainer">
   <label>Output Channel: </label>
   <input type="range" min="1" max="{{maxOut}}"
   value="1" class="slider" [(ngModel)]="outputChannel"
@@ -28,7 +32,9 @@
   {{outputChannel}}
 </div>
 
-<form *ngIf="showConv" id="changeWeightForm" #changeWeightForm="ngForm"
+<form *ngIf=
+"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+id="changeWeightForm" #changeWeightForm="ngForm"
 (ngSubmit)="changeWeight(changeWeightForm)" action = "">
 
   <label for="row">Row: </label>
@@ -46,12 +52,29 @@
   <button type="submit"> Change Weight </button>
 </form>
 
-<div *ngIf = "showConv &&
-this.model.layers[selectedLayer].name.startsWith('conv2d')"
-class="white-space-pre-line">
-{{showConv2d(selectedLayer,inputChannel-1,outputChannel-1)}}
+
+<div *ngIf = "showPooling &&
+this.model.layers[selectedLayer].name.startsWith('max_pooling2d')" class="white-space-pre-line">
+{{showPooling2d(selectedLayer)}}
 </div>
 
-<div *ngIf = "showPooling">
-{{showPooling2d(selectedLayer)}}
+
+
+<div style="display: flex; justify-content: space-around">
+  <div class="white-space-pre-line"
+  *ngIf =
+  "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')">
+  {{showConv2d(selectedLayer,inputChannel-1,outputChannel-1)}}
+  </div>
+
+  <div [hidden] = "!showConv ||
+  !this.model.layers[selectedLayer].name.startsWith('conv2d')">
+    <canvas #canvas_filter></canvas>
+  </div>
+
+  <div [hidden] = "!showConv ||
+  !this.model.layers[selectedLayer].name.startsWith('conv2d')">
+    <canvas #canvas_feature></canvas>
+  </div>
+
 </div>
