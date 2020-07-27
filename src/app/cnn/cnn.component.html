@@ -2,7 +2,7 @@
   <canvas #canvas></canvas>
 </div>
 
-<div class="slidecontainer">
+<div *ngIf="haveModel" class="slidecontainer">
   <label>Layer: </label>
   <input type="range" min="0" max="{{model.layers.length-1}}"
   value="0" class="slider" [(ngModel)]="selectedLayer"

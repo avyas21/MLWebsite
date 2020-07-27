@@ -32,6 +32,12 @@ export class CNNComponent implements AfterViewInit {
   inputImageData: ImageData;
   outputImage = 0;
   maxImage = 0;
+
+  haveModel = false;
+
+  loadmodel: tf.LayersModel;
+
+
   constructor(private cdRef : ChangeDetectorRef) {
     this.cdRef = cdRef;
   }
@@ -40,7 +46,7 @@ export class CNNComponent implements AfterViewInit {
     this.cdRef.detectChanges();
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit() {
     this.context = (this.canvas.nativeElement as
       HTMLCanvasElement).getContext('2d');
     this.context_filter = (this.canvas_filter.nativeElement as
@@ -52,36 +58,42 @@ export class CNNComponent implements AfterViewInit {
     this.context_feature = (this.canvas_feature.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
+    this.model = await tf.loadLayersModel('/assets/model.json');
+    this.haveModel = true;
     this.visualizeLayers();
   }
 
-  model = tf.sequential({
-   layers: [
-     tf.layers.conv2d({
-      inputShape: [28, 28, 1],
-      kernelSize: 5,
-      filters: 8,
-      strides: 1,
-      activation: 'relu',
-      kernelInitializer: 'varianceScaling'
-    }),
-    tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
-    tf.layers.conv2d({
-      kernelSize: 5,
-      filters: 16,
-      strides: 1,
-      activation: 'relu',
-      kernelInitializer: 'varianceScaling'
-    }),
-    tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
-    tf.layers.flatten(),
-    tf.layers.dense({
-      units: 10,
-      kernelInitializer: 'varianceScaling',
-      activation: 'softmax'
-    })
-   ]
-  });
+
+
+  // model = tf.sequential({
+  //  layers: [
+  //    tf.layers.conv2d({
+  //     inputShape: [28, 28, 1],
+  //     kernelSize: 5,
+  //     filters: 8,
+  //     strides: 1,
+  //     activation: 'relu',
+  //     kernelInitializer: 'varianceScaling'
+  //   }),
+  //   tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
+  //   tf.layers.conv2d({
+  //     kernelSize: 5,
+  //     filters: 16,
+  //     strides: 1,
+  //     activation: 'relu',
+  //     kernelInitializer: 'varianceScaling'
+  //   }),
+  //   tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
+  //   tf.layers.flatten(),
+  //   tf.layers.dense({
+  //     units: 10,
+  //     kernelInitializer: 'varianceScaling',
+  //     activation: 'softmax'
+  //   })
+  //  ]
+  // });
+
+  model: tf.LayersModel;
 
   originalModel = this.model;
 
@@ -297,7 +309,6 @@ export class CNNComponent implements AfterViewInit {
         this.visualizeFeature(path,layer_num);
         return;
       }
-      console.log("hi");
     }
 
     else {
@@ -336,7 +347,6 @@ export class CNNComponent implements AfterViewInit {
           imgData.data[4 * (i * dimensions[1] + j) + 3] = 255;
         }
       }
-      console.log("hi2");
       this.canvas_feature.nativeElement.width = dimensions[1]*8 + 100;
       this.canvas_feature.nativeElement.height = dimensions[0]*8 + 100;
 
