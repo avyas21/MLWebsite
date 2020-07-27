@@ -14,6 +14,9 @@ export class CNNComponent implements AfterViewInit {
   private context_filter: CanvasRenderingContext2D;
   @ViewChild('canvas_filter') canvas_filter: ElementRef;
 
+  private context_original: CanvasRenderingContext2D;
+  @ViewChild('canvas_original') canvas_original: ElementRef;
+
   private context_feature: CanvasRenderingContext2D;
   @ViewChild('canvas_feature') canvas_feature: ElementRef;
 
@@ -25,9 +28,10 @@ export class CNNComponent implements AfterViewInit {
   maxOut = 0;
   showConv = false;
   showPooling = false;
-  shownOriginal = false;
+  haveImage = false;
   inputImageData: ImageData;
-
+  outputImage = 0;
+  maxImage = 0;
   constructor(private cdRef : ChangeDetectorRef) {
     this.cdRef = cdRef;
   }
@@ -41,6 +45,9 @@ export class CNNComponent implements AfterViewInit {
       HTMLCanvasElement).getContext('2d');
     this.context_filter = (this.canvas_filter.nativeElement as
        HTMLCanvasElement).getContext('2d');
+
+    this.context_original = (this.canvas_original.nativeElement as
+      HTMLCanvasElement).getContext('2d');
 
     this.context_feature = (this.canvas_feature.nativeElement as
       HTMLCanvasElement).getContext('2d');
@@ -116,6 +123,7 @@ export class CNNComponent implements AfterViewInit {
     this.maxInp = dimensions[2];
     this.maxOut = dimensions[3];
     this.showConv = true;
+    this.maxImage = this.model.layers[layer_num].outputShape[3] as number;
 
     this.canvas_filter.nativeElement.width = dimensions[1]*50 + 100;
     this.canvas_filter.nativeElement.height = dimensions[0]*50 + 100;
@@ -151,7 +159,7 @@ export class CNNComponent implements AfterViewInit {
 
     this.scaleImageData(imgData, 50, this.context_filter);
 
-    this.visualizeFeature("assets/img_1.jpg");
+    // this.visualizeFeature("assets/img_1.jpg", layer_num);
     return string;
   }
 
@@ -182,6 +190,7 @@ export class CNNComponent implements AfterViewInit {
 
     if(this.model.layers[layer_num].name.startsWith('conv2d')) {
       this.showConv2d(layer_num, 0, 0);
+      this.visualizeFeature('assets/img_1.jpg', 0);
       return;
     }
 
@@ -261,6 +270,7 @@ export class CNNComponent implements AfterViewInit {
   initialVisual() {
     if(this.model.layers[0].name.startsWith('conv2d')) {
       this.showConv2d(0, 0, 0);
+      this.visualizeFeature('assets/img_1.jpg', 0);
       return;
     }
 
@@ -270,22 +280,68 @@ export class CNNComponent implements AfterViewInit {
     }
   }
 
-  visualizeFeature(path) {
-    if(!this.shownOriginal) {
-      this.shownOriginal = true;
-      const image = new Image;
+  visualizeFeature(path,layer_num) {
+    if(!this.haveImage) {
+      this.haveImage = true;
+      var image = new Image;
       image.src = path;
       image.onload = () => {
-        this.context_feature.drawImage(image, 0, 0);
-        this.inputImageData = this.context_feature.getImageData(0, 0, image.height,
+        this.context_original.drawImage(image, 0, 0);
+        this.inputImageData = this.context_original.getImageData(0, 0, image.height,
         image.width);
+        this.canvas_original.nativeElement.width = image.width*8 + 100;
+        this.canvas_original.nativeElement.height = image.height*8 + 100;
 
-        this.canvas_feature.nativeElement.width = image.width*10 + 100;
-        this.canvas_feature.nativeElement.height = image.height*20 + 200;
-
-        this.context_feature.scale(8,8);
-        this.context_feature.drawImage(image, 0, 0);
+        this.context_original.scale(8,8);
+        this.context_original.drawImage(image, 0, 0);
+        this.visualizeFeature(path,layer_num);
+        return;
       }
+      console.log("hi");
+    }
+
+    else {
+      var output_model = tf.model({inputs: this.model.input,
+        outputs: this.model.layers[layer_num].output});
+
+      var input = tf.browser.fromPixels(this.inputImageData, 1);
+      input = tf.expandDims(input, 0);
+      var result = output_model.predict(input);
+      var dimensions = (result as tf.Tensor).shape;
+
+
+      var imgData = this.context_feature.createImageData(dimensions[1], dimensions[2]);
+      var arr = (result as tf.Tensor).arraySync();
+
+      var max = arr[layer_num][0][0][this.outputImage];
+      var min = arr[layer_num][0][0][this.outputImage];
+
+      for(var i = 0; i < dimensions[1]; ++i) {
+        for(var j = 0; j < dimensions[2]; ++j) {
+          if(arr[layer_num][i][j][this.outputImage] > max) {
+            max = arr[layer_num][i][j][this.outputImage];
+          }
+          if(arr[layer_num][i][j][this.outputImage] < min) {
+            min = arr[layer_num][i][j][this.outputImage];
+          }
+        }
+      }
+
+      for(var i = 0; i < dimensions[0]; ++i) {
+        for(var j = 0; j < dimensions[1]; ++j) {
+          var val = (arr[layer_num][i][j][this.outputImage]-min)/(max-min)*255;
+          imgData.data[4 * (i * dimensions[1] + j) + 0] = val;
+          imgData.data[4 * (i * dimensions[1] + j) + 1] = val;
+          imgData.data[4 * (i * dimensions[1] + j) + 2] = val;
+          imgData.data[4 * (i * dimensions[1] + j) + 3] = 255;
+        }
+      }
+      console.log("hi2");
+      this.canvas_feature.nativeElement.width = dimensions[1]*8 + 100;
+      this.canvas_feature.nativeElement.height = dimensions[0]*8 + 100;
+
+      this.context_feature.scale(8,8);
+      this.context_feature.putImageData(imgData, 0, 0);
     }
   }
 }

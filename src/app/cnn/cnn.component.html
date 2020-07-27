@@ -71,10 +71,28 @@ this.model.layers[selectedLayer].name.startsWith('max_pooling2d')" class="white-
   !this.model.layers[selectedLayer].name.startsWith('conv2d')">
     <canvas #canvas_filter></canvas>
   </div>
+</div>
 
+<div *ngIf =
+"showConv && haveImage && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+class="slidecontainer">
+  <label>Output Image: </label>
+  <input type="range" min="0" max="{{maxImage-1}}"
+  value="0" class="slider" [(ngModel)]="outputImage"
+             ngModel (change)="visualizeFeature('assets/img_1.jpg', selectedLayer)">
+  {{outputImage+1}}
+</div>
+
+
+
+<div style="display: flex; justify-content: space-around">
   <div [hidden] = "!showConv ||
-  !this.model.layers[selectedLayer].name.startsWith('conv2d')">
-    <canvas #canvas_feature></canvas>
+  !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
+    <canvas #canvas_original></canvas>
   </div>
 
+  <div [hidden] = "!showConv ||
+  !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
+    <canvas #canvas_feature></canvas>
+  </div>
 </div>
