@@ -20,6 +20,10 @@ export class CNNComponent implements AfterViewInit {
   private context_feature: CanvasRenderingContext2D;
   @ViewChild('canvas_feature') canvas_feature: ElementRef;
 
+  private context_scale: CanvasRenderingContext2D;
+  @ViewChild('canvas_scale') canvas_scale: ElementRef;
+
+  convString = '';
   isLayerSelected = false;
   selectedLayer = 0;
   inputChannel = 1;
@@ -58,9 +62,13 @@ export class CNNComponent implements AfterViewInit {
     this.context_feature = (this.canvas_feature.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
+    this.context_scale = (this.canvas_scale.nativeElement as
+      HTMLCanvasElement).getContext('2d');
+
     this.model = await tf.loadLayersModel('/assets/model.json');
     this.haveModel = true;
     this.visualizeLayers();
+    this.showLayerInfo(0);
   }
 
 
@@ -124,12 +132,10 @@ export class CNNComponent implements AfterViewInit {
       this.context.fillText(shapes, 125, y+35);
       y += 50;
     }
-
-    this.initialVisual();
   }
 
 
-  showConv2d(layer_num, inp, out) {
+  async showConv2d(layer_num, inp, out) {
     var arr = this.model.layers[layer_num].getWeights()[0].arraySync();
     var dimensions = this.model.layers[layer_num].getWeights()[0].shape;
     this.maxInp = dimensions[2];
@@ -168,11 +174,20 @@ export class CNNComponent implements AfterViewInit {
       }
     }
 
+    this.convString = string;
 
-    this.scaleImageData(imgData, 50, this.context_filter);
+    var scaling_factor = 200/dimensions[1];
+    this.canvas_scale.nativeElement.width = dimensions[1];
+    this.canvas_scale.nativeElement.height = dimensions[0];
 
-    // this.visualizeFeature("assets/img_1.jpg", layer_num);
-    return string;
+    this.context_scale.putImageData(imgData,0,0);
+
+    this.canvas_filter.nativeElement.width = dimensions[1]*scaling_factor + 100;
+    this.canvas_filter.nativeElement.height = dimensions[0]*scaling_factor+100;
+
+    this.context_filter.scale(scaling_factor,scaling_factor);
+    this.context_filter.drawImage(
+      this.canvas_scale.nativeElement as HTMLCanvasElement,0,0);
   }
 
   showPooling2d(layer_num) {
@@ -195,14 +210,14 @@ export class CNNComponent implements AfterViewInit {
     return string;
   }
 
-  showLayerInfo(layer_num) {
+  async showLayerInfo(layer_num) {
     this.showConv = false;
     this.showPooling = false;
 
 
     if(this.model.layers[layer_num].name.startsWith('conv2d')) {
       this.showConv2d(layer_num, 0, 0);
-      this.visualizeFeature('assets/img_1.jpg', 0);
+      this.visualizeFeature('assets/img_1.jpg', layer_num);
       return;
     }
 
@@ -247,50 +262,15 @@ export class CNNComponent implements AfterViewInit {
     arr[form.value.row-1][form.value.col-1]
       [this.inputChannel-1][this.outputChannel-1] = form.value.val;
 
-    this.model.layers[this.selectedLayer].setWeights([tf.tensor(arr),tf.tensor(bias)]);
+    this.model.layers[this.selectedLayer].
+      setWeights([tf.tensor(arr),tf.tensor(bias)]);
 
+    this.showConv2d(this.selectedLayer,this.inputChannel-1,
+      this.outputChannel-1);
+
+    this.visualizeFeature('assets/img_1.jpg', this.selectedLayer);
   }
 
-  scaleImageData(imageData, scale, context) {
-    var scaled = context.createImageData(imageData.width * scale, imageData.height * scale);
-
-    for(var row = 0; row < imageData.height; row++) {
-      for(var col = 0; col < imageData.width; col++) {
-        var sourcePixel = [
-          imageData.data[(row * imageData.width + col) * 4 + 0],
-          imageData.data[(row * imageData.width + col) * 4 + 1],
-          imageData.data[(row * imageData.width + col) * 4 + 2],
-          imageData.data[(row * imageData.width + col) * 4 + 3]
-        ];
-        for(var y = 0; y < scale; y++) {
-          var destRow = row * scale + y;
-          for(var x = 0; x < scale; x++) {
-            var destCol = col * scale + x;
-            for(var i = 0; i < 4; i++) {
-              scaled.data[(destRow * scaled.width + destCol) * 4 + i] =
-                sourcePixel[i];
-            }
-          }
-        }
-      }
-    }
-
-    context.putImageData(scaled, 0, 0);
-    return scaled;
-  }
-
-  initialVisual() {
-    if(this.model.layers[0].name.startsWith('conv2d')) {
-      this.showConv2d(0, 0, 0);
-      this.visualizeFeature('assets/img_1.jpg', 0);
-      return;
-    }
-
-    if(this.model.layers[0].name.startsWith('max_pooling2d')) {
-      this.showPooling = true;
-      return;
-    }
-  }
 
   visualizeFeature(path,layer_num) {
     if(!this.haveImage) {
@@ -301,10 +281,13 @@ export class CNNComponent implements AfterViewInit {
         this.context_original.drawImage(image, 0, 0);
         this.inputImageData = this.context_original.getImageData(0, 0, image.height,
         image.width);
-        this.canvas_original.nativeElement.width = image.width*8 + 100;
-        this.canvas_original.nativeElement.height = image.height*8 + 100;
 
-        this.context_original.scale(8,8);
+        var scaling_factor = 200/image.width;
+
+        this.canvas_original.nativeElement.width = image.width*scaling_factor + 100;
+        this.canvas_original.nativeElement.height = image.height*scaling_factor + 100;
+
+        this.context_original.scale(scaling_factor,scaling_factor);
         this.context_original.drawImage(image, 0, 0);
         this.visualizeFeature(path,layer_num);
         return;
@@ -324,34 +307,44 @@ export class CNNComponent implements AfterViewInit {
       var imgData = this.context_feature.createImageData(dimensions[1], dimensions[2]);
       var arr = (result as tf.Tensor).arraySync();
 
-      var max = arr[layer_num][0][0][this.outputImage];
-      var min = arr[layer_num][0][0][this.outputImage];
+      var max = arr[0][0][0][this.outputImage];
+      var min = arr[0][0][0][this.outputImage];
 
       for(var i = 0; i < dimensions[1]; ++i) {
         for(var j = 0; j < dimensions[2]; ++j) {
-          if(arr[layer_num][i][j][this.outputImage] > max) {
-            max = arr[layer_num][i][j][this.outputImage];
+          if(arr[0][i][j][this.outputImage] > max) {
+            max = arr[0][i][j][this.outputImage];
           }
-          if(arr[layer_num][i][j][this.outputImage] < min) {
-            min = arr[layer_num][i][j][this.outputImage];
+          if(arr[0][i][j][this.outputImage] < min) {
+            min = arr[0][i][j][this.outputImage];
           }
         }
       }
 
-      for(var i = 0; i < dimensions[0]; ++i) {
-        for(var j = 0; j < dimensions[1]; ++j) {
-          var val = (arr[layer_num][i][j][this.outputImage]-min)/(max-min)*255;
+      for(var i = 0; i < dimensions[1]; ++i) {
+        for(var j = 0; j < dimensions[2]; ++j) {
+          var val = (arr[0][i][j][this.outputImage]-min)/(max-min)*255;
           imgData.data[4 * (i * dimensions[1] + j) + 0] = val;
           imgData.data[4 * (i * dimensions[1] + j) + 1] = val;
           imgData.data[4 * (i * dimensions[1] + j) + 2] = val;
           imgData.data[4 * (i * dimensions[1] + j) + 3] = 255;
         }
       }
-      this.canvas_feature.nativeElement.width = dimensions[1]*8 + 100;
-      this.canvas_feature.nativeElement.height = dimensions[0]*8 + 100;
 
-      this.context_feature.scale(8,8);
-      this.context_feature.putImageData(imgData, 0, 0);
+      var scaling_factor = 200/dimensions[2];
+
+      this.canvas_feature.nativeElement.width =
+        dimensions[2]*scaling_factor + 100;
+      this.canvas_feature.nativeElement.height =
+        dimensions[1]*scaling_factor + 100;
+
+      this.canvas_scale.nativeElement.width = dimensions[2];
+      this.canvas_scale.nativeElement.height = dimensions[1];
+
+      this.context_scale.putImageData(imgData, 0, 0);
+      this.context_feature.scale(scaling_factor,scaling_factor);
+      this.context_feature.drawImage(
+        this.canvas_scale.nativeElement as HTMLCanvasElement,0,0);
     }
   }
 }

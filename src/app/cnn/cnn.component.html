@@ -17,8 +17,8 @@
 class="slidecontainer">
   <label>Input Channel: </label>
   <input type="range" min="1" max="{{maxInp}}"
-  value="1" class="slider" [(ngModel)]="inputChannel"
-             ngModel>
+    value="1" class="slider" [(ngModel)]="inputChannel"
+    ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
   {{inputChannel}}
 </div>
 
@@ -27,8 +27,8 @@ class="slidecontainer">
 class="slidecontainer">
   <label>Output Channel: </label>
   <input type="range" min="1" max="{{maxOut}}"
-  value="1" class="slider" [(ngModel)]="outputChannel"
-             ngModel>
+    value="1" class="slider" [(ngModel)]="outputChannel"
+    ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
   {{outputChannel}}
 </div>
 
@@ -64,7 +64,7 @@ this.model.layers[selectedLayer].name.startsWith('max_pooling2d')" class="white-
   <div class="white-space-pre-line"
   *ngIf =
   "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')">
-  {{showConv2d(selectedLayer,inputChannel-1,outputChannel-1)}}
+  {{convString}}
   </div>
 
   <div [hidden] = "!showConv ||
@@ -95,4 +95,8 @@ class="slidecontainer">
   !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
     <canvas #canvas_feature></canvas>
   </div>
+</div>
+
+<div [hidden] = "true">
+  <canvas #canvas_scale></canvas>
 </div>
