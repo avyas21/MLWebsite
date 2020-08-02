@@ -100,3 +100,18 @@ class="slidecontainer">
 <div [hidden] = "true">
   <canvas #canvas_scale></canvas>
 </div>
+
+<button (click)="getRepresentativeImages()">Get Representative Images</button>
+
+<div *ngIf="haveRepresentativeImages" class="slidecontainer">
+  <label>Class: </label>
+  <input type="range" min="0"
+  max="{{numClasses-1}}"
+  value="0" class="slider" [(ngModel)]="selectedRepresentativeImage"
+             ngModel (change)="drawRepresentativeImage()">
+  {{selectedRepresentativeImage}}
+</div>
+
+<div [hidden] = "!haveRepresentativeImages">
+  <canvas #canvas_rep></canvas>
+</div>
