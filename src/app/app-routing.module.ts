@@ -13,6 +13,7 @@ import { SVMComponent } from './svm/svm.component';
 import { DecisionTreeComponent } from './decision-tree/decision-tree.component';
 import { RandomForestComponent } from './random-forest/random-forest.component';
 import { CNNComponent } from './cnn/cnn.component';
+import { RNNComponent } from './rnn/rnn.component';
 
 const routes: Routes = [
   { path: 'machinelearning', component: MachinelearningComponent },
@@ -28,7 +29,8 @@ const routes: Routes = [
   { path: 'machinelearning/svm', component: SVMComponent},
   { path: 'machinelearning/decisiontree', component: DecisionTreeComponent},
   { path: 'machinelearning/randomforest', component: RandomForestComponent},
-  { path: 'deeplearning/cnn', component: CNNComponent}
+  { path: 'deeplearning/cnn', component: CNNComponent},
+  { path: 'deeplearning/rnn', component: RNNComponent}
 ];
 
 @NgModule({

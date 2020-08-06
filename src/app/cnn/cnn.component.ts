@@ -44,6 +44,7 @@ export class CNNComponent implements AfterViewInit {
   selectedRepresentativeImage = 0;
   haveModel = false;
   loadmodel: tf.LayersModel;
+  model: tf.LayersModel;
   numClasses: number;
 
   constructor(private cdRef : ChangeDetectorRef) {
@@ -76,44 +77,11 @@ export class CNNComponent implements AfterViewInit {
     this.haveModel = true;
     this.numClasses = this.model.layers[this.model.layers.length-1].outputShape[1] as number;
 
+    this.getRepresentativeImages();
     this.visualizeLayers();
     this.showLayerInfo(0);
 
   }
-
-
-
-  // model = tf.sequential({
-  //  layers: [
-  //    tf.layers.conv2d({
-  //     inputShape: [28, 28, 1],
-  //     kernelSize: 5,
-  //     filters: 8,
-  //     strides: 1,
-  //     activation: 'relu',
-  //     kernelInitializer: 'varianceScaling'
-  //   }),
-  //   tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
-  //   tf.layers.conv2d({
-  //     kernelSize: 5,
-  //     filters: 16,
-  //     strides: 1,
-  //     activation: 'relu',
-  //     kernelInitializer: 'varianceScaling'
-  //   }),
-  //   tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}),
-  //   tf.layers.flatten(),
-  //   tf.layers.dense({
-  //     units: 10,
-  //     kernelInitializer: 'varianceScaling',
-  //     activation: 'softmax'
-  //   })
-  //  ]
-  // });
-
-  model: tf.LayersModel;
-
-  originalModel = this.model;
 
   visualizeLayers() {
     this.canvas.nativeElement.width = 500;
@@ -255,11 +223,6 @@ export class CNNComponent implements AfterViewInit {
     }
   }
 
-  resetModel() {
-    this.model = this.originalModel;
-    return;
-  }
-
 
   changeWeight(form: NgForm) {
     if(typeof(form.value.row) == 'string' || form.value.row == null
@@ -352,10 +315,10 @@ export class CNNComponent implements AfterViewInit {
       for(var i = 0; i < dimensions[1]; ++i) {
         for(var j = 0; j < dimensions[2]; ++j) {
           var val = (arr[0][i][j][this.outputImage]-min)/(max-min)*255;
-          imgData.data[4 * (i * dimensions[1] + j) + 0] = val;
-          imgData.data[4 * (i * dimensions[1] + j) + 1] = val;
-          imgData.data[4 * (i * dimensions[1] + j) + 2] = val;
-          imgData.data[4 * (i * dimensions[1] + j) + 3] = 255;
+          imgData.data[4 * (i * dimensions[2] + j) + 0] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 1] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 2] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 3] = 255;
         }
       }
 
@@ -374,15 +337,6 @@ export class CNNComponent implements AfterViewInit {
       this.context_feature.drawImage(
         this.canvas_scale.nativeElement as HTMLCanvasElement,0,0);
     }
-  }
-
-
-  getCol(matrix, col){
-     var column = [];
-     for(var i=0; i<matrix.length; i++){
-        column.push(matrix[i][col]);
-     }
-     return column;
   }
 
   getRepresentativeImages() {
@@ -404,12 +358,13 @@ export class CNNComponent implements AfterViewInit {
     for(var output_class = 0; output_class < out_shape[0]; ++output_class) {
       let loss = x =>
       (output_model.predict(x) as tf.Tensor).matMul(weights[0]).add(weights[1]).
-        slice([0,output_class],[1,1])
+        slice([0,output_class],[1,1]);
 
       let g = tf.grad(loss);
-      var input = tf.randomUniform([28,28,1]);
+      // var input = tf.randomUniform([28,28,1]);
+      var input = tf.zeros([28,28,1]);
       input = tf.expandDims(input, 0);
-      for(var i = 0; i < 25; ++i) {
+      for(var i = 0; i < 50; ++i) {
         let grad = g(input);
         input = input.add(g(input));
       }
@@ -444,10 +399,10 @@ export class CNNComponent implements AfterViewInit {
     for(var i = 0; i < dimensions[1]; ++i) {
       for(var j = 0; j < dimensions[2]; ++j) {
         var val = (arr[0][i][j][0]-min)/(max-min)*255;
-        imgData.data[4 * (i * dimensions[1] + j) + 0] = val;
-        imgData.data[4 * (i * dimensions[1] + j) + 1] = val;
-        imgData.data[4 * (i * dimensions[1] + j) + 2] = val;
-        imgData.data[4 * (i * dimensions[1] + j) + 3] = 255;
+        imgData.data[4 * (i * dimensions[2] + j) + 0] = val;
+        imgData.data[4 * (i * dimensions[2] + j) + 1] = val;
+        imgData.data[4 * (i * dimensions[2] + j) + 2] = val;
+        imgData.data[4 * (i * dimensions[2] + j) + 3] = 255;
       }
     }
 

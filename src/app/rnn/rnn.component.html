@@ -1,0 +1,51 @@
+<div>
+  <canvas #canvas></canvas>
+</div>
+
+<div *ngIf="haveModel" class="slidecontainer">
+  <label>Layer: </label>
+  <input type="range" min="0" max="{{model.layers.length-1}}"
+  value="0" class="slider" [(ngModel)]="selectedLayer"
+             ngModel (change)="showLayerInfo(selectedLayer)">
+  {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
+</div>
+
+<div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
+  && !this.model.layers[selectedLayer].name.includes('input')"
+class="slidecontainer">
+  <label> Gate: </label>
+  <input type="range" min="0" max="{{gates.length-1}}"
+    value="0" class="slider" [(ngModel)]="gateNum"
+    ngModel (change)="showLSTM(gateNum, weightNum)">
+  {{gates[gateNum]}}
+</div>
+
+<div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
+  && !this.model.layers[selectedLayer].name.includes('input')"
+class="slidecontainer">
+  <label> Weight: </label>
+  <input type="range" min="0" max="{{weights.length-1}}"
+    value="0" class="slider" [(ngModel)]="weightNum"
+    ngModel (change)="showLSTM(gateNum, weightNum)">
+  {{weights[weightNum]}}
+</div>
+
+<div [hidden]="!showLstm
+|| !this.model.layers[selectedLayer].name.startsWith('lstm')
+|| this.model.layers[selectedLayer].name.includes('input')">
+  <canvas #canvas_weight></canvas>
+</div>
+
+
+<div [hidden]="true">
+  <canvas #canvas_original></canvas>
+</div>
+
+<div *ngIf = "showActivation" style="display: block; width: 1000px;">
+  <canvas baseChart
+    [labels] = "barChartLabel"
+    [datasets]="barChartData"
+    [options]="barChartOptions"
+    [chartType]="barChartType">
+  </canvas>
+</div>
