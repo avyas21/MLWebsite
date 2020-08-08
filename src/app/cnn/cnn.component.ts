@@ -365,8 +365,10 @@ export class CNNComponent implements AfterViewInit {
       var input = tf.zeros([28,28,1]);
       input = tf.expandDims(input, 0);
       for(var i = 0; i < 50; ++i) {
-        let grad = g(input);
-        input = input.add(g(input));
+        setTimeout(function() {
+          let grad = g(input);
+          input = input.add(g(input));
+        }, 200);
       }
       this.representativeImages.push(input);
     }
