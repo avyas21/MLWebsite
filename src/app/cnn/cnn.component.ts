@@ -77,9 +77,9 @@ export class CNNComponent implements AfterViewInit {
     this.haveModel = true;
     this.numClasses = this.model.layers[this.model.layers.length-1].outputShape[1] as number;
 
-    this.getRepresentativeImages();
     this.visualizeLayers();
     this.showLayerInfo(0);
+    this.getRepresentativeImages();
 
   }
 
@@ -351,33 +351,70 @@ export class CNNComponent implements AfterViewInit {
     var output_model = tf.model({inputs: this.model.input,
       outputs: this.model.layers[this.model.layers.length-2].output});
 
-    var out_shape = this.model.layers[this.model.layers.length-1].outputShape;
-    out_shape.splice(0,1);
+    var out_shape = this.numClasses;
 
 
-    for(var output_class = 0; output_class < out_shape[0]; ++output_class) {
-      let loss = x =>
+    // for(var output_class = 0; output_class < out_shape[0]; ++output_class) {
+    //   let loss = x =>
+    //   (output_model.predict(x) as tf.Tensor).matMul(weights[0]).add(weights[1]).
+    //     slice([0,output_class],[1,1]);
+    //
+    //   let g = tf.grad(loss);
+    //   var input = tf.zeros([28,28,1]);
+    //   input = tf.expandDims(input, 0);
+    //
+    //   for(var i = 0; i < 50; ++i) {
+    //     let grad = g(input);
+    //     input = input.add(g(input));
+    //   }
+    //
+    //   this.representativeImages.push(input);
+    // }
+    //
+    // this.haveRepresentativeImages = true;
+    // this.drawRepresentativeImage();
+
+    var output_class = 0;
+    var iter = 0;
+    let loss = x =>
       (output_model.predict(x) as tf.Tensor).matMul(weights[0]).add(weights[1]).
+        slice([0,0],[1,1]);
+
+    let g = tf.grad(loss);
+    var input = tf.zeros([28,28,1]);
+    input = tf.expandDims(input, 0);
+
+
+    var images = this.representativeImages;
+    let self = this;
+
+    var interval  = setInterval(function(){
+      if(iter >= 50) {
+        iter = 0;
+        ++output_class;
+        images.push(input);
+        if(output_class >= out_shape) {
+          clearInterval(interval);
+          self.drawRepresentativeImage();
+          return;
+        }
+
+        loss = x =>
+        (output_model.predict(x) as tf.Tensor).matMul(weights[0]).add(weights[1]).
         slice([0,output_class],[1,1]);
-
-      let g = tf.grad(loss);
-      // var input = tf.randomUniform([28,28,1]);
-      var input = tf.zeros([28,28,1]);
-      input = tf.expandDims(input, 0);
-      for(var i = 0; i < 50; ++i) {
-        setTimeout(function() {
-          let grad = g(input);
-          input = input.add(g(input));
-        }, 200);
+        g = tf.grad(loss);
+        input = tf.zeros([28,28,1]);
+        input = tf.expandDims(input, 0);
       }
-      this.representativeImages.push(input);
-    }
 
-    this.haveRepresentativeImages = true;
-    this.drawRepresentativeImage();
+      let grad = g(input);
+      input = input.add(g(input));
+      ++iter;
+    }, 200);
   }
 
   drawRepresentativeImage() {
+    this.haveRepresentativeImages = true;
     var img = this.representativeImages[this.selectedRepresentativeImage];
     var dimensions = img.shape;
     var arr = img.arraySync();

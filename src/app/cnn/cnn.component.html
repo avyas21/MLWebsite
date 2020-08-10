@@ -101,6 +101,10 @@ class="slidecontainer">
   <canvas #canvas_scale></canvas>
 </div>
 
+<div *ngIf = "!haveRepresentativeImages">
+Generating Class Representative Images .... ({{representativeImages.length}}/{{numClasses}})
+</div>
+
 <div *ngIf="haveRepresentativeImages" class="slidecontainer">
   <label>Class: </label>
   <input type="range" min="0"
