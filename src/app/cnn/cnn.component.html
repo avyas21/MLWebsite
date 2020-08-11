@@ -1,5 +1,25 @@
-<div>
-  <canvas #canvas></canvas>
+<div style="display: flex; justify-content: space-around">
+  <div>
+    <canvas #canvas></canvas>
+  </div>
+
+
+  <div [hidden] = "!haveRepresentativeImages" class="slidecontainer">
+    <canvas #canvas_rep></canvas>
+    <br>
+    <label>Class: </label>
+    <input type="range" min="0"
+    max="{{numClasses-1}}"
+    value="0" class="slider" [(ngModel)]="selectedRepresentativeImage"
+               ngModel (change)="drawRepresentativeImage()">
+    {{selectedRepresentativeImage}}
+  </div>
+
+
+</div>
+
+<div *ngIf = "!haveRepresentativeImages">
+Generating Class Representative Images .... ({{representativeImages.length}}/{{numClasses}})
 </div>
 
 <div *ngIf="haveModel" class="slidecontainer">
@@ -53,13 +73,6 @@ id="changeWeightForm" #changeWeightForm="ngForm"
 </form>
 
 
-<div *ngIf = "showPooling &&
-this.model.layers[selectedLayer].name.startsWith('max_pooling2d')" class="white-space-pre-line">
-{{showPooling2d(selectedLayer)}}
-</div>
-
-
-
 <div style="display: flex; justify-content: space-around">
   <div class="white-space-pre-line"
   *ngIf =
@@ -101,19 +114,8 @@ class="slidecontainer">
   <canvas #canvas_scale></canvas>
 </div>
 
-<div *ngIf = "!haveRepresentativeImages">
-Generating Class Representative Images .... ({{representativeImages.length}}/{{numClasses}})
-</div>
 
-<div *ngIf="haveRepresentativeImages" class="slidecontainer">
-  <label>Class: </label>
-  <input type="range" min="0"
-  max="{{numClasses-1}}"
-  value="0" class="slider" [(ngModel)]="selectedRepresentativeImage"
-             ngModel (change)="drawRepresentativeImage()">
-  {{selectedRepresentativeImage}}
-</div>
-
-<div [hidden] = "!haveRepresentativeImages">
-  <canvas #canvas_rep></canvas>
+<div [hidden] = "!showPooling
+|| !this.model.layers[selectedLayer].name.startsWith('max_pooling2d')">
+  <canvas #canvas_func></canvas>
 </div>

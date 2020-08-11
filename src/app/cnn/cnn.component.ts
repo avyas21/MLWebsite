@@ -11,6 +11,9 @@ export class CNNComponent implements AfterViewInit {
   private context: CanvasRenderingContext2D;
   @ViewChild('canvas') canvas: ElementRef;
 
+  private context_func: CanvasRenderingContext2D;
+  @ViewChild('canvas_func') canvas_func: ElementRef;
+
   private context_rep: CanvasRenderingContext2D;
   @ViewChild('canvas_rep') canvas_rep: ElementRef;
 
@@ -27,6 +30,7 @@ export class CNNComponent implements AfterViewInit {
   @ViewChild('canvas_scale') canvas_scale: ElementRef;
 
   convString = '';
+  poolingString = '';
   isLayerSelected = false;
   selectedLayer = 0;
   inputChannel = 1;
@@ -71,6 +75,9 @@ export class CNNComponent implements AfterViewInit {
       HTMLCanvasElement).getContext('2d');
 
     this.context_rep = (this.canvas_rep.nativeElement as
+      HTMLCanvasElement).getContext('2d');
+
+    this.context_func = (this.canvas_func.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
     this.model = await tf.loadLayersModel('/assets/model.json');
@@ -142,8 +149,8 @@ export class CNNComponent implements AfterViewInit {
     this.showConv = true;
     this.maxImage = this.model.layers[layer_num].outputShape[3] as number;
 
-    this.canvas_filter.nativeElement.width = dimensions[1]*50 + 100;
-    this.canvas_filter.nativeElement.height = dimensions[0]*50 + 100;
+    this.canvas_filter.nativeElement.width = dimensions[1]*50 + 20;
+    this.canvas_filter.nativeElement.height = dimensions[0]*50 + 20;
     var imgData = this.context_filter.createImageData(dimensions[0], dimensions[1]);
     var string = '';
     string += '-----------------------------------------\n';
@@ -180,30 +187,73 @@ export class CNNComponent implements AfterViewInit {
     var scaled_data = this.scaleImageData(imgData, scaling_factor,
       this.context_filter);
 
-    this.canvas_filter.nativeElement.width = dimensions[1]*scaling_factor + 100;
-    this.canvas_filter.nativeElement.height = dimensions[0]*scaling_factor+100;
+    this.canvas_filter.nativeElement.width = dimensions[1]*scaling_factor + 20;
+    this.canvas_filter.nativeElement.height = dimensions[0]*scaling_factor+20;
 
     this.context_filter.putImageData(scaled_data,0,0);
   }
 
   showPooling2d(layer_num) {
-    var pool = this.model.layers[layer_num].getConfig().poolSize;
-    var stride = this.model.layers[layer_num].getConfig().strides;
+    this.canvas_func.nativeElement.width = 300;
+    this.canvas_func.nativeElement.height = 300;
+    var current = this.model.layers[layer_num].outputShape;
+    var pool_layer = this.model.layers[layer_num].getConfig();
+    var poolSize = pool_layer.poolSize;
+    var stride = pool_layer.strides;
+    var prev = this.model.layers[layer_num-1].outputShape;
 
-    var string = '';
-    var line =  '-----'.repeat(pool[1]);
+    this.context_func.beginPath();
+    this.context_func.moveTo(25,25);
+    this.context_func.lineTo(75,25);
+    this.context_func.lineTo(67,20);
+    this.context_func.moveTo(75,25);
+    this.context_func.lineTo(67,30);
 
-    for(var i = 0; i < pool[0]; ++i) {
-      string += line + '\n';
-      for(var j = 0; j < pool[1]; ++j) {
-        string += '| 0 ';
-      }
-      string += '|\n';
+    this.context_func.moveTo(25,25);
+    this.context_func.lineTo(25,75);
+    this.context_func.lineTo(20,67);
+    this.context_func.moveTo(25,75);
+    this.context_func.lineTo(30,67);
 
-    }
+    this.context_func.moveTo(100,40);
+    this.context_func.lineTo(125,40);
+    this.context_func.moveTo(100,50);
+    this.context_func.lineTo(125,50);
+    this.context_func.moveTo(120,35);
+    this.context_func.lineTo(130,45);
+    this.context_func.moveTo(120,55);
+    this.context_func.lineTo(130,45);
 
-    string += line;
-    return string;
+    this.context_func.moveTo(155,25);
+    this.context_func.lineTo(155,75);
+    this.context_func.lineTo(150,67);
+    this.context_func.moveTo(155,75);
+    this.context_func.lineTo(160,67);
+
+    this.context_func.moveTo(155,25);
+    this.context_func.lineTo(205,25);
+    this.context_func.lineTo(197,20);
+    this.context_func.moveTo(205,25);
+    this.context_func.lineTo(197,30);
+
+    this.context_func.stroke();
+
+    this.context_func.font = '12px serif';
+    this.context_func.fillText(prev[2].toString(), 80, 30);
+    this.context_func.fillText(prev[1].toString(), 20, 85);
+
+    this.context_func.fillText(current[2].toString(), 210, 30);
+    this.context_func.fillText(current[1].toString(), 150, 85);
+
+    this.context_func.font = '10px serif';
+    this.context_func.fillText(poolSize[0].toString() + ' x '
+      + poolSize[1].toString(), 100, 65);
+    this.context_func.fillText('Pool Size', 90, 75);
+    this.context_func.fillText(stride[0].toString() + ' x '
+      + stride[1].toString(), 100, 85);
+    this.context_func.fillText('Stride', 100, 95);
+
+    this.showPooling = true;
   }
 
   async showLayerInfo(layer_num) {
@@ -218,7 +268,7 @@ export class CNNComponent implements AfterViewInit {
     }
 
     if(this.model.layers[layer_num].name.startsWith('max_pooling2d')) {
-      this.showPooling = true;
+      this.showPooling2d(layer_num);
       return;
     }
   }
@@ -275,8 +325,8 @@ export class CNNComponent implements AfterViewInit {
 
         var scaling_factor = 200/image.width;
 
-        this.canvas_original.nativeElement.width = image.width*scaling_factor + 100;
-        this.canvas_original.nativeElement.height = image.height*scaling_factor + 100;
+        this.canvas_original.nativeElement.width = image.width*scaling_factor + 20;
+        this.canvas_original.nativeElement.height = image.height*scaling_factor + 20;
 
         this.context_original.scale(scaling_factor,scaling_factor);
         this.context_original.drawImage(image, 0, 0);
@@ -325,9 +375,9 @@ export class CNNComponent implements AfterViewInit {
       var scaling_factor = 200/dimensions[2];
 
       this.canvas_feature.nativeElement.width =
-        dimensions[2]*scaling_factor + 100;
+        dimensions[2]*scaling_factor + 20;
       this.canvas_feature.nativeElement.height =
-        dimensions[1]*scaling_factor + 100;
+        dimensions[1]*scaling_factor + 20;
 
       this.canvas_scale.nativeElement.width = dimensions[2];
       this.canvas_scale.nativeElement.height = dimensions[1];
@@ -352,27 +402,6 @@ export class CNNComponent implements AfterViewInit {
       outputs: this.model.layers[this.model.layers.length-2].output});
 
     var out_shape = this.numClasses;
-
-
-    // for(var output_class = 0; output_class < out_shape[0]; ++output_class) {
-    //   let loss = x =>
-    //   (output_model.predict(x) as tf.Tensor).matMul(weights[0]).add(weights[1]).
-    //     slice([0,output_class],[1,1]);
-    //
-    //   let g = tf.grad(loss);
-    //   var input = tf.zeros([28,28,1]);
-    //   input = tf.expandDims(input, 0);
-    //
-    //   for(var i = 0; i < 50; ++i) {
-    //     let grad = g(input);
-    //     input = input.add(g(input));
-    //   }
-    //
-    //   this.representativeImages.push(input);
-    // }
-    //
-    // this.haveRepresentativeImages = true;
-    // this.drawRepresentativeImage();
 
     var output_class = 0;
     var iter = 0;
@@ -448,9 +477,9 @@ export class CNNComponent implements AfterViewInit {
     var scaling_factor = 200/dimensions[2];
 
     this.canvas_rep.nativeElement.width =
-      dimensions[2]*scaling_factor + 100;
+      dimensions[2]*scaling_factor + 20;
     this.canvas_rep.nativeElement.height =
-      dimensions[1]*scaling_factor + 100;
+      dimensions[1]*scaling_factor + 20;
 
     this.canvas_scale.nativeElement.width = dimensions[2];
     this.canvas_scale.nativeElement.height = dimensions[1];
