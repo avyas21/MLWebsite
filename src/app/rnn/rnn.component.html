@@ -72,3 +72,8 @@ style="display: block; width: 1000px;">
     [chartType]="barChartType2">
   </canvas>
 </div>
+
+<div *ngIf = "showLSTMInput && this.model.layers[selectedLayer].name.startsWith('lstm')
+  && this.model.layers[selectedLayer].name.includes('input')">
+Input Layer to LSTM Layer
+</div>

@@ -14,6 +14,7 @@ export class RNNComponent implements AfterViewInit {
   model: tf.LayersModel;
   haveModel = false;
   showLstm = false;
+  showLSTMInput = false;
   showDense = false;
   haveImage = false;
   selectedLayer = 0;
@@ -113,6 +114,7 @@ export class RNNComponent implements AfterViewInit {
   async showLayerInfo(layer_num) {
     this.showLstm= false;
     this.showDense = false;
+    this.showLSTMInput = false;
 
     if(this.model.layers[layer_num].name.startsWith('lstm')
       && !this.model.layers[layer_num].name.includes('input')) {
@@ -120,6 +122,12 @@ export class RNNComponent implements AfterViewInit {
       this.processInput('assets/img_1.jpg',1);
       this.showLstm = true;
       return;
+    }
+
+    if(this.model.layers[layer_num].name.startsWith('lstm')
+      && this.model.layers[layer_num].name.includes('input')) {
+      this.showLSTMInput = true;
+
     }
 
     if(this.model.layers[layer_num].name.startsWith('dense')) {
