@@ -85,24 +85,45 @@ export class RNNComponent implements AfterViewInit {
   visualizeLayers() {
     this.canvas.nativeElement.width = 500;
     this.canvas.nativeElement.height = (this.model.layers.length * 50) + 100;
+    this.context.fillStyle = "rgba(140, 182, 97, 0.7)";
+    this.context.fillRect(0, 0, this.canvas.nativeElement.width,
+      this.canvas.nativeElement.height);
 
     this.context.strokeRect(0, 0, this.canvas.nativeElement.width,
       this.canvas.nativeElement.height);
 
     this.context.font = "12px Arial";
+    this.context.fillStyle = "black";
     this.context.fillText("Network Architecture", 200, 20);
 
 
     var y = 50;
 
-    this.context.strokeRect(125, y, 250, 50);
+    this.context.fillStyle = "rgb(184, 188, 87)";
+    this.context.fillRect(125, y, 250, 50);
+    this.context.fillStyle = "black";
     var input = "Input Shape: " +
       JSON.stringify(this.model.layers[0].batchInputShape);
     this.context.fillText(input, 125, y+35);
     y += 50;
 
     for(var i = 0; i < this.model.layers.length; ++i) {
-      this.context.strokeRect(125, y, 250, 50);
+      if(this.model.layers[i].name.startsWith('lstm') &&
+      !this.model.layers[i].name.includes('input')) {
+        this.context.fillStyle = "rgb(182, 100, 97)";
+      }
+
+      else if(this.model.layers[i].name.includes('input')) {
+        this.context.fillStyle = "rgb(182, 143, 97)";
+      }
+
+      else if(this.model.layers[i].name.startsWith('dense')) {
+        this.context.fillStyle = "rgb(148, 140, 132)";
+      }
+
+
+      this.context.fillRect(125, y, 250, 50);
+      this.context.fillStyle = "black";
       this.context.fillText(this.model.layers[i].name, 125, y+20);
       var shapes = "Output Shape: " +
         JSON.stringify(this.model.layers[i].outputShape);
