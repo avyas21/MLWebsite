@@ -260,6 +260,8 @@ export class RNNComponent implements AfterViewInit {
         labels.push(i.toString());
       }
       this.barChartData[0].data = (result as tf.Tensor).arraySync()[0] as number[];
+      console.log(this.barChartData[0].data);
+      console.log(labels);
       this.showActivation = true;
     }
   }

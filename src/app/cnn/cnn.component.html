@@ -119,3 +119,29 @@ class="slidecontainer">
 || !this.model.layers[selectedLayer].name.startsWith('max_pooling2d')">
   <canvas #canvas_func></canvas>
 </div>
+
+<div [hidden] = "!showFlatten
+|| !this.model.layers[selectedLayer].name.startsWith('flatten')">
+  {{flattenString}}
+</div>
+
+<div *ngIf = "showDense
+&& this.model.layers[selectedLayer].name.startsWith('dense')"
+style="display: block; width: 1000px;">
+  <label>Output Node: </label>
+  <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
+  value="0" class="slider" [(ngModel)]="selectedDenseOut"
+             ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
+  {{selectedDenseOut+1}}
+</div>
+
+<div *ngIf = "showDense
+&& this.model.layers[selectedLayer].name.startsWith('dense')"
+style="display: block; width: 1000px;">
+  <canvas baseChart
+    [labels] = "barChartLabel"
+    [datasets]="barChartData"
+    [options]="barChartOptions"
+    [chartType]="barChartType">
+  </canvas>
+</div>

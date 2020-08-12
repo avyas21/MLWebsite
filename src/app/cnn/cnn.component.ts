@@ -1,6 +1,9 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import * as tf from '@tensorflow/tfjs';
 import { NgForm } from '@angular/forms';
+import { Label } from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
+import { ChartDataSets, ChartType, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-cnn',
@@ -8,6 +11,19 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./cnn.component.css']
 })
 export class CNNComponent implements AfterViewInit {
+
+  public barChartLabel: Label = [];
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+  };
+
+  public barChartData: ChartDataSets[] = [
+    { data: [0,1,1,2,3,4,4,5,6,10], label: 'Weights'}
+  ];
+
+  public barChartType: ChartType = 'bar';
+
   private context: CanvasRenderingContext2D;
   @ViewChild('canvas') canvas: ElementRef;
 
@@ -30,7 +46,7 @@ export class CNNComponent implements AfterViewInit {
   @ViewChild('canvas_scale') canvas_scale: ElementRef;
 
   convString = '';
-  poolingString = '';
+  flattenString = '';
   isLayerSelected = false;
   selectedLayer = 0;
   inputChannel = 1;
@@ -38,7 +54,9 @@ export class CNNComponent implements AfterViewInit {
   maxInp = 0;
   maxOut = 0;
   showConv = false;
+  showDense = false;
   showPooling = false;
+  showFlatten = false;
   haveImage = false;
   inputImageData: ImageData;
   outputImage = 0;
@@ -50,6 +68,7 @@ export class CNNComponent implements AfterViewInit {
   loadmodel: tf.LayersModel;
   model: tf.LayersModel;
   numClasses: number;
+  selectedDenseOut = 0;
 
   constructor(private cdRef : ChangeDetectorRef) {
     this.cdRef = cdRef;
@@ -256,10 +275,31 @@ export class CNNComponent implements AfterViewInit {
     this.showPooling = true;
   }
 
+
+  showDenseLayer(layer_num, output_num) {
+    this.showDense = false;
+    var weights = this.model.layers[layer_num].getWeights();
+    var w = weights[0].arraySync();
+    var bias = weights[1].arraySync();
+    this.barChartData[0].data = [];
+    this.barChartLabel = [];
+    var data = [];
+    (this.barChartLabel as string[]).push('bias');
+    data.push(bias[output_num]);
+    for(var i = 0; i < weights[0].shape[0]; ++i) {
+      (this.barChartLabel as string[]).push(i.toString());
+      data.push(w[i][output_num]);
+    }
+
+    this.barChartData[0].data = data;
+    this.showDense = true;
+  }
+
   async showLayerInfo(layer_num) {
     this.showConv = false;
     this.showPooling = false;
-
+    this.showFlatten = false;
+    this.showDense = false;
 
     if(this.model.layers[layer_num].name.startsWith('conv2d')) {
       this.showConv2d(layer_num, 0, 0);
@@ -270,6 +310,21 @@ export class CNNComponent implements AfterViewInit {
     if(this.model.layers[layer_num].name.startsWith('max_pooling2d')) {
       this.showPooling2d(layer_num);
       return;
+    }
+
+
+    if(this.model.layers[layer_num].name.startsWith('flatten')) {
+      var out = this.model.layers[layer_num].outputShape;
+      var inp = this.model.layers[layer_num-1].outputShape;
+      inp.shift();
+      this.flattenString = 'Turns input array of shape [' + inp.toString()
+        + '] into array of length ' + out[1].toString();
+
+      this.showFlatten = true;
+    }
+
+    if(this.model.layers[layer_num].name.startsWith('dense')) {
+      this.showDenseLayer(layer_num, this.selectedDenseOut);
     }
   }
 
