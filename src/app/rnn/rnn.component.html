@@ -41,11 +41,34 @@ class="slidecontainer">
   <canvas #canvas_original></canvas>
 </div>
 
-<div *ngIf = "showActivation" style="display: block; width: 1000px;">
+
+<div *ngIf = "showDense
+&& this.model.layers[selectedLayer].name.startsWith('dense')"
+style="display: block; width: 1000px;">
+  <label>Output Node: </label>
+  <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
+  value="0" class="slider" [(ngModel)]="selectedDenseOut"
+             ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
+  {{selectedDenseOut+1}}
+</div>
+
+<div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
+  && !this.model.layers[selectedLayer].name.includes('input')" style="display: block; width: 1000px;">
   <canvas baseChart
-    [labels] = "barChartLabel"
-    [datasets]="barChartData"
-    [options]="barChartOptions"
-    [chartType]="barChartType">
+  [labels] = "barChartLabel"
+  [datasets]="barChartData"
+  [options]="barChartOptions"
+  [chartType]="barChartType">
+</canvas>
+</div>
+
+<div *ngIf = "showDense
+&& this.model.layers[selectedLayer].name.startsWith('dense')"
+style="display: block; width: 1000px;">
+  <canvas baseChart
+    [labels] = "barChartLabel2"
+    [datasets]="barChartData2"
+    [options]="barChartOptions2"
+    [chartType]="barChartType2">
   </canvas>
 </div>

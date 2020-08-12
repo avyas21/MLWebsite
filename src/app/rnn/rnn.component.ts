@@ -14,6 +14,7 @@ export class RNNComponent implements AfterViewInit {
   model: tf.LayersModel;
   haveModel = false;
   showLstm = false;
+  showDense = false;
   haveImage = false;
   showActivation = false;
   selectedLayer = 0;
@@ -21,7 +22,7 @@ export class RNNComponent implements AfterViewInit {
   weights = ['kernel', 'recurrent','bias'];
   weightNum = 0;
   gateNum = 0;
-
+  selectedDenseOut = 0;
 
   public barChartLabel: Label = [];
 
@@ -34,6 +35,18 @@ export class RNNComponent implements AfterViewInit {
   ];
 
   public barChartType: ChartType = 'bar';
+
+  public barChartLabel2: Label = [];
+
+  public barChartOptions2: ChartOptions = {
+    responsive: true,
+  };
+
+  public barChartData2: ChartDataSets[] = [
+    { data: [], label: 'Weights'}
+  ];
+
+  public barChartType2: ChartType = 'bar';
 
   private context: CanvasRenderingContext2D;
   @ViewChild('canvas') canvas: ElementRef;
@@ -100,6 +113,7 @@ export class RNNComponent implements AfterViewInit {
 
   async showLayerInfo(layer_num) {
     this.showLstm= false;
+    this.showDense = false;
 
     if(this.model.layers[layer_num].name.startsWith('lstm')
       && !this.model.layers[layer_num].name.includes('input')) {
@@ -107,6 +121,10 @@ export class RNNComponent implements AfterViewInit {
       this.processInput('assets/img_1.jpg',1);
       this.showLstm = true;
       return;
+    }
+
+    if(this.model.layers[layer_num].name.startsWith('dense')) {
+      this.showDenseLayer(layer_num, this.selectedDenseOut);
     }
 
   }
@@ -236,6 +254,25 @@ export class RNNComponent implements AfterViewInit {
 
   }
 
+  showDenseLayer(layer_num, output_num) {
+    this.showDense = false;
+    var weights = this.model.layers[layer_num].getWeights();
+    var w = weights[0].arraySync();
+    var bias = weights[1].arraySync();
+    this.barChartData2[0].data = [];
+    this.barChartLabel2 = [];
+    var data = [];
+    (this.barChartLabel2 as string[]).push('bias');
+    data.push(bias[output_num]);
+    for(var i = 0; i < weights[0].shape[0]; ++i) {
+      (this.barChartLabel2 as string[]).push(i.toString());
+      data.push(w[i][output_num]);
+    }
+
+    this.barChartData2[0].data = data;
+    this.showDense = true;
+  }
+
   processInput(path, layer_num) {
     var image = new Image;
     image.src = path;
@@ -254,14 +291,14 @@ export class RNNComponent implements AfterViewInit {
 
       var w = this.model.layers[this.selectedLayer].getWeights()[0];
       var units = w.shape[1]/4;
-      var labels: string[] = this.barChartLabel as string[];
+      this.barChartLabel = [];
+
 
       for(var i = 0; i < units; ++i) {
-        labels.push(i.toString());
+        (this.barChartLabel as string[]).push(i.toString());
       }
+      this.barChartData[0].data = [];
       this.barChartData[0].data = (result as tf.Tensor).arraySync()[0] as number[];
-      console.log(this.barChartData[0].data);
-      console.log(labels);
       this.showActivation = true;
     }
   }

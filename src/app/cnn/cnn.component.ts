@@ -19,7 +19,7 @@ export class CNNComponent implements AfterViewInit {
   };
 
   public barChartData: ChartDataSets[] = [
-    { data: [0,1,1,2,3,4,4,5,6,10], label: 'Weights'}
+    { data: [], label: 'Weights'}
   ];
 
   public barChartType: ChartType = 'bar';
