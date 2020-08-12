@@ -16,7 +16,6 @@ export class RNNComponent implements AfterViewInit {
   showLstm = false;
   showDense = false;
   haveImage = false;
-  showActivation = false;
   selectedLayer = 0;
   gates = ['input','forget','cell state','output'];
   weights = ['kernel', 'recurrent','bias'];
@@ -299,7 +298,6 @@ export class RNNComponent implements AfterViewInit {
       }
       this.barChartData[0].data = [];
       this.barChartData[0].data = (result as tf.Tensor).arraySync()[0] as number[];
-      this.showActivation = true;
     }
   }
 }
