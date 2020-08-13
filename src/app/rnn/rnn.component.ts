@@ -140,7 +140,7 @@ export class RNNComponent implements AfterViewInit {
     if(this.model.layers[layer_num].name.startsWith('lstm')
       && !this.model.layers[layer_num].name.includes('input')) {
       this.showLSTM(this.gateNum, this.weightNum);
-      this.processInput('assets/img_1.jpg',1);
+      this.processInput('assets/img_1.jpg',layer_num);
       this.showLstm = true;
       return;
     }
@@ -232,9 +232,9 @@ export class RNNComponent implements AfterViewInit {
 
       var scaling_factor = Math.ceil(200/dimensions[1]);
       this.canvas_weight.nativeElement.width =
-        dimensions[1]*scaling_factor + 100;
+        dimensions[1]*scaling_factor + 20;
       this.canvas_weight.nativeElement.height =
-        dimensions[0]*scaling_factor + 100;
+        dimensions[0]*scaling_factor + 20;
 
       var scaled_data = this.scaleImageData(imgData, scaling_factor,
         this.context_weight);
@@ -310,6 +310,14 @@ export class RNNComponent implements AfterViewInit {
         image.width);
       var output_model = tf.model({inputs: this.model.input,
         outputs: this.model.layers[layer_num].output});
+
+      var scaling_factor = 200/image.width;
+
+      this.canvas_original.nativeElement.width = image.width*scaling_factor + 20;
+      this.canvas_original.nativeElement.height = image.height*scaling_factor + 20;
+
+      this.context_original.scale(scaling_factor,scaling_factor);
+      this.context_original.drawImage(image, 0, 0);
 
       var input = tf.browser.fromPixels(imgData, 1);
       input = input.reshape([1,28,28]);

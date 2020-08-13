@@ -1,3 +1,28 @@
+<h2><u>Interface Usage Information</u></h2>
+<p> Use the Sliders to interact with the interface. The layer slider allows you
+to view information specific to the layer in chronological order. For a
+convolution layer, 2 additional sliders are displayed for input and output
+channels. Changing these sliders changes the associated heatmap of the filter
+along with the weights of the filter. The filter heatmap is a grayscale
+representation of the filter weights shown on the left. You can change the
+weights of the filter and view the corresponding changes on the filter heatmap.
+Furthermore, for convolution layers, output images of the layers are displayed;
+the left image is the original image and the right image is the output from the
+layer. Change the slider to see the different output images</p>
+
+<p>For other layers like the pooling and flatten layers, a graphical
+  visualization for the functionality of the layers is displayed. Finally, for
+dense layers, a plot of the layer weights is displayed for all the output
+ values. Use the corresponding slider to see the plot for different output
+ values.</p>
+
+ <p>Other than layer information, the interface displays the encompassing
+ network Architecture in chronlogical order from top to bottom. Additionally,
+images are generated that maximize class scores. These images capture the notion
+of a class in the model. The model used in the interface is trained using the MNIST
+dataset which is a collection of handwritten digit images. The classes of the
+model are the digits 0-9, and the interface generates representative images for
+all these digits</p>
 <div style="display: flex; justify-content: space-around">
   <div>
     <canvas #canvas></canvas>

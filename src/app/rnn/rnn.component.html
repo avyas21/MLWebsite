@@ -1,3 +1,26 @@
+<h2><u>Interface Usage Information</u></h2>
+<p>Use the Sliders to interact with the interface. The layer slider allows you
+to view information specific to the layer in chronological order. For LSTM
+layers, 2 additional sliders are displayed for Gates and the type of Weights. An
+LSTM cell has 4 gates: Input, Forget, Cell State, and Output gates. Furthermore,
+there are 3 types of Weights: kernel, recurrent, and bias weights. You can
+interact with the sliders to display a heatmap for different weights of the LSTM
+cell given gate and type of weight. The x-axis of the heatmap is the units of
+the LSTM cell (the number of output dimensions). The y-axis depends on the type
+of weight. For kernel weights, the y-axis is the number of input dimensions, and
+for recurrent weights, it is the number of output dimensions (the number of
+cells). Furthermore, for the LSTM layer, a plot is generated for the layer
+activations after a input is passed. The input image is displayed at the
+beginning of the interface</p>
+
+<p>For other layers like the lstm input layer, a short description of the layer
+  is displayed. Finally, for dense layers, a plot of the layer weights is
+  displayed for all the output values. Use the corresponding slider to see the
+  plot for different output values. On top of layer information, the interface
+  displays the encompassing network Architecture in chronlogical order from top
+  to bottom. The model used in the interface is trained using the MNIST
+  dataset which is a collection of handwritten digit images</p>
+
 <div>
   <canvas #canvas></canvas>
 </div>
@@ -30,15 +53,19 @@ class="slidecontainer">
   {{weights[weightNum]}}
 </div>
 
-<div [hidden]="!showLstm
-|| !this.model.layers[selectedLayer].name.startsWith('lstm')
-|| this.model.layers[selectedLayer].name.includes('input')">
-  <canvas #canvas_weight></canvas>
-</div>
 
+<div style="display: flex; justify-content: space-around">
+  <div [hidden]="!showLstm
+  || !this.model.layers[selectedLayer].name.startsWith('lstm')
+  || this.model.layers[selectedLayer].name.includes('input')">
+    <canvas #canvas_weight></canvas>
+  </div>
 
-<div [hidden]="true">
-  <canvas #canvas_original></canvas>
+  <div [hidden]="!showLstm
+  || !this.model.layers[selectedLayer].name.startsWith('lstm')
+  || this.model.layers[selectedLayer].name.includes('input')">
+    <canvas #canvas_original></canvas>
+  </div>
 </div>
 
 
