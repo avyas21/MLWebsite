@@ -99,7 +99,7 @@ export class CNNComponent implements AfterViewInit {
     this.context_func = (this.canvas_func.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
-    this.model = await tf.loadLayersModel('/assets/model.json');
+    this.model = await tf.loadLayersModel('assets/model.json');
     this.haveModel = true;
     this.numClasses = this.model.layers[this.model.layers.length-1].outputShape[1] as number;
 

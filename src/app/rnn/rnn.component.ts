@@ -75,7 +75,7 @@ export class RNNComponent implements AfterViewInit {
     this.context_original = (this.canvas_original.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
-    this.model = await tf.loadLayersModel('/assets/LSTM/model.json');
+    this.model = await tf.loadLayersModel('assets/LSTM/model.json');
     this.haveModel = true;
     this.visualizeLayers();
     this.showLayerInfo(0);
