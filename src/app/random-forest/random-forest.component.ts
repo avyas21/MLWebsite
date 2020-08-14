@@ -121,12 +121,6 @@ export class RandomForestComponent implements OnInit {
         return;
       }
 
-    this.attributes = [{primaryColor: 'red', secondaryColor: 'red'},
-  {primaryColor: 'red', secondaryColor: 'blue'},
-  {primaryColor: 'red', secondaryColor: 'yellow'}];
-
-    this.labels = ['red', 'purple', 'green'];
-
     if(this.attributes.length < 3) {
       var left = 3 - this.attributes.length;
       alert("Please Add " + left.toString() + " more Points");
