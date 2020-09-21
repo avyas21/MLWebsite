@@ -1,4 +1,4 @@
-<h2><u>Interface Usage Information</u></h2>
+<h2><u>CNN Interface Usage Information</u></h2>
 <p> Use the Sliders to interact with the interface. The layer slider allows you
 to view information specific to the layer in chronological order. For a
 convolution layer, 2 additional sliders are displayed for input and output
@@ -23,150 +23,144 @@ of a class in the model. The model used in the interface is trained using the MN
 dataset which is a collection of handwritten digit images. The classes of the
 model are the digits 0-9, and the interface generates representative images for
 all these digits</p>
-<div style="display: flex; justify-content: space-around">
-  <div>
+
+<div [hidden] = "!haveRepresentativeImages" class="slidecontainer">
+  Class Representative Images:
+  <canvas #canvas_rep></canvas>
+</div>
+
+
+
+<div class= "loading" *ngIf = "!haveRepresentativeImages">
+Generating Class Representative Images .... ({{representativeImages.length}}/{{numClasses}})
+</div>
+
+<div class="arch">
+  <div class = "diagram">
     <canvas #canvas></canvas>
   </div>
 
 
-  <div [hidden] = "!haveRepresentativeImages" class="slidecontainer">
-    <canvas #canvas_rep></canvas>
+  <div>
+    <div *ngIf="haveModel" class="slidecontainer">
+      <label>Layer: </label>
+      {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
+      <button (click)="changeLayer(-1)" class="nav"><</button>
+      <button (click)="changeLayer(1)" class="nav">></button>
+    </div>
     <br>
-    <label>Class: </label>
-    <input type="range" min="0"
-    max="{{numClasses-1}}"
-    value="0" class="slider" [(ngModel)]="selectedRepresentativeImage"
-               ngModel (change)="drawRepresentativeImage()">
-    {{selectedRepresentativeImage}}
+    <br>
+    <div [hidden] = "!showPooling
+    || !this.model.layers[selectedLayer].name.startsWith('max_pooling2d')">
+      <canvas #canvas_func></canvas>
+    </div>
+
+    <div [hidden] = "!showFlatten
+    || !this.model.layers[selectedLayer].name.startsWith('flatten')">
+      {{flattenString}}
+    </div>
+
+    <div *ngIf = "showDense
+    && this.model.layers[selectedLayer].name.startsWith('dense')"
+    style="display:block;width: 500px;">
+      <label>Output Node: </label>
+      <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
+      value="0" class="slider" [(ngModel)]="selectedDenseOut"
+                 ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
+      {{selectedDenseOut+1}}
+    </div>
+
+    <br *ngIf = "showDense
+    && this.model.layers[selectedLayer].name.startsWith('dense')">
+
+    <div *ngIf = "showDense
+    && this.model.layers[selectedLayer].name.startsWith('dense')"
+    style="width: 800px;">
+      <canvas baseChart
+        [labels] = "barChartLabel"
+        [datasets]="barChartData"
+        [options]="barChartOptions"
+        [chartType]="barChartType">
+      </canvas>
+    </div>
+    <div *ngIf =
+    "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+    class="slidecontainer">
+      <label>Input Channel: </label>
+      <input type="range" min="1" max="{{maxInp}}"
+        value="1" class="slider" [(ngModel)]="inputChannel"
+        ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
+      {{inputChannel}}
+    </div>
+    <br>
+    <br>
+    <div *ngIf =
+    "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+    class="slidecontainer">
+      <label>Output Channel: </label>
+      <input type="range" min="1" max="{{maxOut}}"
+        value="1" class="slider" [(ngModel)]="outputChannel"
+        ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
+      {{outputChannel}}
+    </div>
+    <br>
+    <br>
+    <form *ngIf=
+    "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+    id="changeWeightForm" #changeWeightForm="ngForm"
+    (ngSubmit)="changeWeight(changeWeightForm)" action = "">
+
+      <label for="row">Row: </label>
+      <input type="number" id="row"
+             ngModel name="row" required>
+
+      <label for="col">Col: </label>
+      <input type="number" id="col"
+              ngModel name="col" required>
+
+      <label for="val">Value: </label>
+      <input type="number" id="val"
+              ngModel name="val" required>
+
+      <button type="submit"> Change Weight </button>
+    </form>
+    <div style="display: flex; justify-content: space-around">
+      <div class="white-space-pre-line"
+      *ngIf =
+      "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')">
+      {{convString}}
+      </div>
+
+      <div [hidden] = "!showConv ||
+      !this.model.layers[selectedLayer].name.startsWith('conv2d')">
+        <br>
+        <canvas #canvas_filter></canvas>
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+    <div *ngIf =
+    "showConv && haveImage && this.model.layers[selectedLayer].name.startsWith('conv2d')"
+    class="slidecontainer">
+      <label>Output Image: </label>
+      <input type="range" min="0" max="{{maxImage-1}}"
+      value="0" class="slider" [(ngModel)]="outputImage"
+                 ngModel (change)="visualizeFeature('assets/img_1.jpg', selectedLayer)">
+      {{outputImage+1}}
+    </div>
+    <div style="clear:both;"></div>
+    <div style="display: flex; position: relative; justify-content: space-around">
+      <div [hidden] = "!showConv ||
+      !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
+        <canvas #canvas_original></canvas>
+      </div>
+
+      <div [hidden] = "!showConv ||
+      !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
+        <canvas #canvas_feature></canvas>
+      </div>
+    </div>
+
   </div>
 
-
 </div>
-
-<div *ngIf = "!haveRepresentativeImages">
-Generating Class Representative Images .... ({{representativeImages.length}}/{{numClasses}})
-</div>
-
-<div *ngIf="haveModel" class="slidecontainer">
-  <label>Layer: </label>
-  <input type="range" min="0" max="{{model.layers.length-1}}"
-  value="0" class="slider" [(ngModel)]="selectedLayer"
-             ngModel (change)="showLayerInfo(selectedLayer)">
-  {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
-</div>
-
-
-
-<div *ngIf =
-"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
-class="slidecontainer">
-  <label>Input Channel: </label>
-  <input type="range" min="1" max="{{maxInp}}"
-    value="1" class="slider" [(ngModel)]="inputChannel"
-    ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
-  {{inputChannel}}
-</div>
-
-<div *ngIf =
-"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
-class="slidecontainer">
-  <label>Output Channel: </label>
-  <input type="range" min="1" max="{{maxOut}}"
-    value="1" class="slider" [(ngModel)]="outputChannel"
-    ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
-  {{outputChannel}}
-</div>
-
-<form *ngIf=
-"showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')"
-id="changeWeightForm" #changeWeightForm="ngForm"
-(ngSubmit)="changeWeight(changeWeightForm)" action = "">
-
-  <label for="row">Row: </label>
-  <input type="number" id="row"
-         ngModel name="row" required>
-
-  <label for="col">Col: </label>
-  <input type="number" id="col"
-          ngModel name="col" required>
-
-  <label for="val">Value: </label>
-  <input type="number" id="val"
-          ngModel name="val" required>
-
-  <button type="submit"> Change Weight </button>
-</form>
-
-
-<div style="display: flex; justify-content: space-around">
-  <div class="white-space-pre-line"
-  *ngIf =
-  "showConv && this.model.layers[selectedLayer].name.startsWith('conv2d')">
-  {{convString}}
-  </div>
-
-  <div [hidden] = "!showConv ||
-  !this.model.layers[selectedLayer].name.startsWith('conv2d')">
-    <canvas #canvas_filter></canvas>
-  </div>
-</div>
-
-<div *ngIf =
-"showConv && haveImage && this.model.layers[selectedLayer].name.startsWith('conv2d')"
-class="slidecontainer">
-  <label>Output Image: </label>
-  <input type="range" min="0" max="{{maxImage-1}}"
-  value="0" class="slider" [(ngModel)]="outputImage"
-             ngModel (change)="visualizeFeature('assets/img_1.jpg', selectedLayer)">
-  {{outputImage+1}}
-</div>
-
-
-
-<div style="display: flex; justify-content: space-around">
-  <div [hidden] = "!showConv ||
-  !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
-    <canvas #canvas_original></canvas>
-  </div>
-
-  <div [hidden] = "!showConv ||
-  !this.model.layers[selectedLayer].name.startsWith('conv2d') || !haveImage">
-    <canvas #canvas_feature></canvas>
-  </div>
-</div>
-
-<div [hidden] = "true">
-  <canvas #canvas_scale></canvas>
-</div>
-
-
-<div [hidden] = "!showPooling
-|| !this.model.layers[selectedLayer].name.startsWith('max_pooling2d')">
-  <canvas #canvas_func></canvas>
-</div>
-
-<div [hidden] = "!showFlatten
-|| !this.model.layers[selectedLayer].name.startsWith('flatten')">
-  {{flattenString}}
-</div>
-
-<div *ngIf = "showDense
-&& this.model.layers[selectedLayer].name.startsWith('dense')"
-style="display: block; width: 1000px;">
-  <label>Output Node: </label>
-  <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
-  value="0" class="slider" [(ngModel)]="selectedDenseOut"
-             ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
-  {{selectedDenseOut+1}}
-</div>
-
-<div *ngIf = "showDense
-&& this.model.layers[selectedLayer].name.startsWith('dense')"
-style="display: block; width: 1000px;">
-  <canvas baseChart
-    [labels] = "barChartLabel"
-    [datasets]="barChartData"
-    [options]="barChartOptions"
-    [chartType]="barChartType">
-  </canvas>
-</div>
+<div style="clear:both;"></div>

@@ -42,9 +42,6 @@ export class CNNComponent implements AfterViewInit {
   private context_feature: CanvasRenderingContext2D;
   @ViewChild('canvas_feature') canvas_feature: ElementRef;
 
-  private context_scale: CanvasRenderingContext2D;
-  @ViewChild('canvas_scale') canvas_scale: ElementRef;
-
   convString = '';
   flattenString = '';
   isLayerSelected = false;
@@ -90,8 +87,6 @@ export class CNNComponent implements AfterViewInit {
     this.context_feature = (this.canvas_feature.nativeElement as
       HTMLCanvasElement).getContext('2d');
 
-    this.context_scale = (this.canvas_scale.nativeElement as
-      HTMLCanvasElement).getContext('2d');
 
     this.context_rep = (this.canvas_rep.nativeElement as
       HTMLCanvasElement).getContext('2d');
@@ -110,7 +105,7 @@ export class CNNComponent implements AfterViewInit {
   }
 
   visualizeLayers() {
-    this.canvas.nativeElement.width = 500;
+    this.canvas.nativeElement.width = 400;
     this.canvas.nativeElement.height = (this.model.layers.length * 50) + 100;
     this.context.fillStyle = "rgba(140, 182, 97, 0.7)";
     this.context.fillRect(0, 0, this.canvas.nativeElement.width,
@@ -121,13 +116,13 @@ export class CNNComponent implements AfterViewInit {
 
     this.context.font = "12px Arial";
     this.context.fillStyle = "black";
-    this.context.fillText("Network Architecture", 200, 20);
+    this.context.fillText("Network Architecture", 150, 20);
 
 
     var y = 50;
 
     this.context.fillStyle = "rgb(184, 188, 87)";
-    this.context.fillRect(125, y, 250, 50);
+    this.context.fillRect(75, y, 250, 50);
     this.context.fillStyle = "black";
     var input = "Input Shape: " +
       JSON.stringify(this.model.layers[0].batchInputShape);
@@ -152,7 +147,7 @@ export class CNNComponent implements AfterViewInit {
       }
 
 
-      this.context.fillRect(125, y, 250, 50);
+      this.context.fillRect(75, y, 250, 50);
       this.context.fillStyle = "black";
       this.context.fillText(this.model.layers[i].name, 125, y+20);
       var shapes = "Output Shape: " +
@@ -226,7 +221,7 @@ export class CNNComponent implements AfterViewInit {
 
     this.convString = string;
 
-    var scaling_factor = Math.ceil(200/dimensions[1]);
+    var scaling_factor = Math.ceil(100/dimensions[1]);
     var scaled_data = this.scaleImageData(imgData, scaling_factor,
       this.context_filter);
 
@@ -338,8 +333,9 @@ export class CNNComponent implements AfterViewInit {
 
 
     if(this.model.layers[layer_num].name.startsWith('flatten')) {
+      console.log(this.model.layers[layer_num-1].outputShape);
       var out = this.model.layers[layer_num].outputShape;
-      var inp = this.model.layers[layer_num-1].outputShape;
+      var inp = this.model.layers[layer_num-1].outputShape.slice();
       inp.shift();
       this.flattenString = 'Turns input array of shape [' + inp.toString()
         + '] into array of length ' + out[1].toString();
@@ -402,13 +398,16 @@ export class CNNComponent implements AfterViewInit {
         this.inputImageData = this.context_original.getImageData(0, 0, image.height,
         image.width);
 
-        var scaling_factor = 200/image.width;
+        var scaling_factor = Math.ceil(100/image.width);;
+
+        var scaled_data = this.scaleImageData(this.inputImageData, scaling_factor,
+          this.context_original);
 
         this.canvas_original.nativeElement.width = image.width*scaling_factor + 20;
         this.canvas_original.nativeElement.height = image.height*scaling_factor + 20;
 
-        this.context_original.scale(scaling_factor,scaling_factor);
-        this.context_original.drawImage(image, 0, 0);
+
+        this.context_original.putImageData(scaled_data,0,0);
         this.visualizeFeature(path,layer_num);
         return;
       }
@@ -451,20 +450,15 @@ export class CNNComponent implements AfterViewInit {
         }
       }
 
-      var scaling_factor = 200/dimensions[2];
+      var scaling_factor = Math.ceil(100/dimensions[1]);
 
       this.canvas_feature.nativeElement.width =
         dimensions[2]*scaling_factor + 20;
       this.canvas_feature.nativeElement.height =
         dimensions[1]*scaling_factor + 20;
-
-      this.canvas_scale.nativeElement.width = dimensions[2];
-      this.canvas_scale.nativeElement.height = dimensions[1];
-
-      this.context_scale.putImageData(imgData, 0, 0);
-      this.context_feature.scale(scaling_factor,scaling_factor);
-      this.context_feature.drawImage(
-        this.canvas_scale.nativeElement as HTMLCanvasElement,0,0);
+      var scaled_data = this.scaleImageData(imgData, scaling_factor,
+        this.context_feature);
+      this.context_feature.putImageData(scaled_data, 0, 0);
     }
   }
 
@@ -522,51 +516,67 @@ export class CNNComponent implements AfterViewInit {
   }
 
   drawRepresentativeImage() {
-    this.haveRepresentativeImages = true;
-    var img = this.representativeImages[this.selectedRepresentativeImage];
+    var img = this.representativeImages[0];
     var dimensions = img.shape;
-    var arr = img.arraySync();
-
-    var max = arr[0][0][0][0];
-    var min = arr[0][0][0][0];
-
-    var imgData = this.context_rep.createImageData(dimensions[1], dimensions[2]);
-
-    for(var i = 0; i < dimensions[1]; ++i) {
-      for(var j = 0; j < dimensions[2]; ++j) {
-        if(arr[0][i][j][0] > max) {
-          max = arr[0][i][j][0];
-        }
-        if(arr[0][i][j][0] < min) {
-          min = arr[0][i][j][0];
-        }
-      }
-    }
-
-    for(var i = 0; i < dimensions[1]; ++i) {
-      for(var j = 0; j < dimensions[2]; ++j) {
-        var val = (arr[0][i][j][0]-min)/(max-min)*255;
-        imgData.data[4 * (i * dimensions[2] + j) + 0] = val;
-        imgData.data[4 * (i * dimensions[2] + j) + 1] = val;
-        imgData.data[4 * (i * dimensions[2] + j) + 2] = val;
-        imgData.data[4 * (i * dimensions[2] + j) + 3] = 255;
-      }
-    }
-
-    var scaling_factor = 200/dimensions[2];
-
+    var scaling_factor = Math.ceil(100/dimensions[2]);
+    this.haveRepresentativeImages = true;
     this.canvas_rep.nativeElement.width =
-      dimensions[2]*scaling_factor + 20;
+      dimensions[2]*scaling_factor*this.numClasses + 20;
     this.canvas_rep.nativeElement.height =
       dimensions[1]*scaling_factor + 20;
 
-    this.canvas_scale.nativeElement.width = dimensions[2];
-    this.canvas_scale.nativeElement.height = dimensions[1];
+    for(var k = 0; k < this.numClasses; ++k) {
+      // var img = this.representativeImages[this.selectedRepresentativeImage];
+      console.log(k);
+      img = this.representativeImages[k];
+      dimensions = img.shape;
+      var arr = img.arraySync();
 
-    this.context_scale.putImageData(imgData, 0, 0);
-    this.context_rep.scale(scaling_factor,scaling_factor);
-    this.context_rep.drawImage(
-      this.canvas_scale.nativeElement as HTMLCanvasElement,0,0);
+      var max = arr[0][0][0][0];
+      var min = arr[0][0][0][0];
+
+      var imgData = this.context_rep.createImageData(dimensions[1], dimensions[2]);
+
+      for(var i = 0; i < dimensions[1]; ++i) {
+        for(var j = 0; j < dimensions[2]; ++j) {
+          if(arr[0][i][j][0] > max) {
+            max = arr[0][i][j][0];
+          }
+          if(arr[0][i][j][0] < min) {
+            min = arr[0][i][j][0];
+          }
+        }
+      }
+
+      for(var i = 0; i < dimensions[1]; ++i) {
+        for(var j = 0; j < dimensions[2]; ++j) {
+          var val = (arr[0][i][j][0]-min)/(max-min)*255;
+          imgData.data[4 * (i * dimensions[2] + j) + 0] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 1] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 2] = val;
+          imgData.data[4 * (i * dimensions[2] + j) + 3] = 255;
+        }
+      }
+
+
+      var scaled_data = this.scaleImageData(imgData, scaling_factor,
+        this.context_rep);
+
+
+      this.context_rep.putImageData(scaled_data, dimensions[2]*k*scaling_factor, 0);
+    }
+  }
+
+  changeLayer(direction) {
+    if(direction == 1 && this.selectedLayer +1 < this.model.layers.length) {
+      this.selectedLayer += 1;
+      this.showLayerInfo(this.selectedLayer);
+    }
+
+    if(direction == -1 && this.selectedLayer -1 >= 0) {
+      this.selectedLayer -= 1;
+      this.showLayerInfo(this.selectedLayer);
+    }
   }
 
 }

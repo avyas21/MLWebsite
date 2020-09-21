@@ -2,4 +2,17 @@ div.white-space-pre-line {
     white-space: pre-line;
     font-family: Courier New;
     float: left;
+    padding-right: 20px;
+}
+
+.arch div {
+  float: left;
+}
+
+.slidecontainer div {
+  position:relative;
+}
+
+div.diagram {
+  padding-right: 20px;
 }
