@@ -83,7 +83,7 @@ export class RNNComponent implements AfterViewInit {
   }
 
   visualizeLayers() {
-    this.canvas.nativeElement.width = 500;
+    this.canvas.nativeElement.width = 400;
     this.canvas.nativeElement.height = (this.model.layers.length * 50) + 100;
     this.context.fillStyle = "rgba(140, 182, 97, 0.7)";
     this.context.fillRect(0, 0, this.canvas.nativeElement.width,
@@ -94,13 +94,13 @@ export class RNNComponent implements AfterViewInit {
 
     this.context.font = "12px Arial";
     this.context.fillStyle = "black";
-    this.context.fillText("Network Architecture", 200, 20);
+    this.context.fillText("Network Architecture", 150, 20);
 
 
     var y = 50;
 
     this.context.fillStyle = "rgb(184, 188, 87)";
-    this.context.fillRect(125, y, 250, 50);
+    this.context.fillRect(75, y, 250, 50);
     this.context.fillStyle = "black";
     var input = "Input Shape: " +
       JSON.stringify(this.model.layers[0].batchInputShape);
@@ -122,7 +122,7 @@ export class RNNComponent implements AfterViewInit {
       }
 
 
-      this.context.fillRect(125, y, 250, 50);
+      this.context.fillRect(75, y, 250, 50);
       this.context.fillStyle = "black";
       this.context.fillText(this.model.layers[i].name, 125, y+20);
       var shapes = "Output Shape: " +
@@ -230,7 +230,7 @@ export class RNNComponent implements AfterViewInit {
         }
       }
 
-      var scaling_factor = Math.ceil(200/dimensions[1]);
+      var scaling_factor = Math.ceil(100/dimensions[1]);
       this.canvas_weight.nativeElement.width =
         dimensions[1]*scaling_factor + 20;
       this.canvas_weight.nativeElement.height =
@@ -241,6 +241,20 @@ export class RNNComponent implements AfterViewInit {
 
 
       this.context_weight.putImageData(scaled_data,0,0);
+      this.context_weight.font = "12px Consolas";
+      this.context_weight.fillStyle = "black";
+      this.context_weight.fillText("Units", (dimensions[1]*scaling_factor)/2 -20,
+        dimensions[0]*scaling_factor + 20);
+      if(this.weightNum == 0 || this.weightNum == 1) {
+        var string = 'Input Dim';
+        if(this.weightNum == 1) {
+          string = 'Output Dim';
+        }
+        for (var i = 0; i < string.length; i++) {
+          this.context_weight.fillText(string.charAt(i),
+          (dimensions[1]*scaling_factor)+ 5, 10*(i+1));
+        }
+      }
     }
 
     else {
@@ -311,13 +325,13 @@ export class RNNComponent implements AfterViewInit {
       var output_model = tf.model({inputs: this.model.input,
         outputs: this.model.layers[layer_num].output});
 
-      var scaling_factor = 200/image.width;
-
+      var scaling_factor = Math.ceil(100/image.width);
+      var scaled_data = this.scaleImageData(imgData, scaling_factor,
+        this.context_original);
       this.canvas_original.nativeElement.width = image.width*scaling_factor + 20;
       this.canvas_original.nativeElement.height = image.height*scaling_factor + 20;
 
-      this.context_original.scale(scaling_factor,scaling_factor);
-      this.context_original.drawImage(image, 0, 0);
+      this.context_original.putImageData(scaled_data, 0, 0);
 
       var input = tf.browser.fromPixels(imgData, 1);
       input = input.reshape([1,28,28]);
@@ -335,6 +349,18 @@ export class RNNComponent implements AfterViewInit {
       }
       this.barChartData[0].data = [];
       this.barChartData[0].data = (result as tf.Tensor).arraySync()[0] as number[];
+    }
+  }
+
+  changeLayer(direction) {
+    if(direction == 1 && this.selectedLayer +1 < this.model.layers.length) {
+      this.selectedLayer += 1;
+      this.showLayerInfo(this.selectedLayer);
+    }
+
+    if(direction == -1 && this.selectedLayer -1 >= 0) {
+      this.selectedLayer -= 1;
+      this.showLayerInfo(this.selectedLayer);
     }
   }
 }

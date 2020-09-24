@@ -1,0 +1,7 @@
+.arch div {
+  float: left;
+}
+
+div.diagram {
+  padding-right: 20px;
+}

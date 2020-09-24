@@ -1,4 +1,5 @@
 <h2><u>CNN Interface Usage Information</u></h2>
+<img  class="images" src="../../assets/conv.png"/>
 <p> Use the Sliders to interact with the interface. The layer slider allows you
 to view information specific to the layer in chronological order. For a
 convolution layer, 2 additional sliders are displayed for input and output
@@ -26,6 +27,7 @@ all these digits</p>
 
 <div [hidden] = "!haveRepresentativeImages" class="slidecontainer">
   Class Representative Images:
+  <br>
   <canvas #canvas_rep></canvas>
 </div>
 
@@ -90,7 +92,7 @@ Generating Class Representative Images .... ({{representativeImages.length}}/{{n
       <input type="range" min="1" max="{{maxInp}}"
         value="1" class="slider" [(ngModel)]="inputChannel"
         ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
-      {{inputChannel}}
+      {{inputChannel}}/{{maxInp}}
     </div>
     <br>
     <br>
@@ -101,7 +103,7 @@ Generating Class Representative Images .... ({{representativeImages.length}}/{{n
       <input type="range" min="1" max="{{maxOut}}"
         value="1" class="slider" [(ngModel)]="outputChannel"
         ngModel (change)="showConv2d(selectedLayer,inputChannel-1,outputChannel-1)">
-      {{outputChannel}}
+      {{outputChannel}}/{{maxOut}}
     </div>
     <br>
     <br>

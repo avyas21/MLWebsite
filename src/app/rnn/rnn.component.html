@@ -1,4 +1,5 @@
-<h2><u>Interface Usage Information</u></h2>
+<h2><u>RNN Interface Usage Information</u></h2>
+<img  class="images" src="../../assets/RNN.PNG"/>
 <p>Use the Sliders to interact with the interface. The layer slider allows you
 to view information specific to the layer in chronological order. For LSTM
 layers, 2 additional sliders are displayed for Gates and the type of Weights. An
@@ -21,86 +22,86 @@ beginning of the interface</p>
   to bottom. The model used in the interface is trained using the MNIST
   dataset which is a collection of handwritten digit images</p>
 
-<div>
-  <canvas #canvas></canvas>
-</div>
-
-<div *ngIf="haveModel" class="slidecontainer">
-  <label>Layer: </label>
-  <input type="range" min="0" max="{{model.layers.length-1}}"
-  value="0" class="slider" [(ngModel)]="selectedLayer"
-             ngModel (change)="showLayerInfo(selectedLayer)">
-  {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
-</div>
-
-<div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
-  && !this.model.layers[selectedLayer].name.includes('input')"
-class="slidecontainer">
-  <label> Gate: </label>
-  <input type="range" min="0" max="{{gates.length-1}}"
-    value="0" class="slider" [(ngModel)]="gateNum"
-    ngModel (change)="showLSTM(gateNum, weightNum)">
-  {{gates[gateNum]}}
-</div>
-
-<div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
-  && !this.model.layers[selectedLayer].name.includes('input')"
-class="slidecontainer">
-  <label> Weight: </label>
-  <input type="range" min="0" max="{{weights.length-1}}"
-    value="0" class="slider" [(ngModel)]="weightNum"
-    ngModel (change)="showLSTM(gateNum, weightNum)">
-  {{weights[weightNum]}}
-</div>
-
-
-<div style="display: flex; justify-content: space-around">
-  <div [hidden]="!showLstm
-  || !this.model.layers[selectedLayer].name.startsWith('lstm')
-  || this.model.layers[selectedLayer].name.includes('input')">
-    <canvas #canvas_weight></canvas>
+<div class="arch">
+  <div class ="diagram">
+    <canvas #canvas></canvas>
+  </div>
+  <div>
+    <div *ngIf="haveModel" class="slidecontainer">
+      <label>Layer: </label>
+      {{selectedLayer+1}} ({{model.layers[selectedLayer].name}})
+      <button (click)="changeLayer(-1)" class="nav"><</button>
+      <button (click)="changeLayer(1)" class="nav">></button>
+    </div>
+  </div>
+  <br>
+  <br>
+  <div *ngIf = "showDense
+  && this.model.layers[selectedLayer].name.startsWith('dense')"
+  style="display: block; width: 800px;">
+    <label>Output Node: </label>
+    <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
+    value="0" class="slider" [(ngModel)]="selectedDenseOut"
+               ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
+    {{selectedDenseOut+1}}
   </div>
 
-  <div [hidden]="!showLstm
-  || !this.model.layers[selectedLayer].name.startsWith('lstm')
-  || this.model.layers[selectedLayer].name.includes('input')">
-    <canvas #canvas_original></canvas>
+  <div *ngIf = "showDense
+  && this.model.layers[selectedLayer].name.startsWith('dense')"
+  style="display: block; width: 800px;">
+    <canvas baseChart
+      [labels] = "barChartLabel2"
+      [datasets]="barChartData2"
+      [options]="barChartOptions2"
+      [chartType]="barChartType2">
+    </canvas>
+  </div>
+  <div *ngIf = "showLSTMInput && this.model.layers[selectedLayer].name.startsWith('lstm')
+    && this.model.layers[selectedLayer].name.includes('input')">
+  Input Layer to LSTM Layer
+  </div>
+  <div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
+    && !this.model.layers[selectedLayer].name.includes('input')"
+  class="slidecontainer">
+    <label> Gate: </label>
+    <input type="range" min="0" max="{{gates.length-1}}"
+      value="0" class="slider" [(ngModel)]="gateNum"
+      ngModel (change)="showLSTM(gateNum, weightNum)">
+    {{gates[gateNum]}}
+  </div>
+  <br>
+  <br>
+  <div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
+    && !this.model.layers[selectedLayer].name.includes('input')"
+  class="slidecontainer">
+    <label> Weight: </label>
+    <input type="range" min="0" max="{{weights.length-1}}"
+      value="0" class="slider" [(ngModel)]="weightNum"
+      ngModel (change)="showLSTM(gateNum, weightNum)">
+    {{weights[weightNum]}}
+  </div>
+  <br>
+  <br>
+  <div style="display: flex; justify-content: space-around">
+    <div [hidden]="!showLstm
+    || !this.model.layers[selectedLayer].name.startsWith('lstm')
+    || this.model.layers[selectedLayer].name.includes('input')">
+      <canvas #canvas_original></canvas>
+    </div>
+
+    <div [hidden]="!showLstm
+    || !this.model.layers[selectedLayer].name.startsWith('lstm')
+    || this.model.layers[selectedLayer].name.includes('input')">
+      <canvas #canvas_weight></canvas>
+    </div>
   </div>
 </div>
-
-
-<div *ngIf = "showDense
-&& this.model.layers[selectedLayer].name.startsWith('dense')"
-style="display: block; width: 1000px;">
-  <label>Output Node: </label>
-  <input type="range" min="0" max="{{model.layers[selectedLayer].getWeights()[1].shape[0]-1}}"
-  value="0" class="slider" [(ngModel)]="selectedDenseOut"
-             ngModel (change)="showDenseLayer(selectedLayer,selectedDenseOut)">
-  {{selectedDenseOut+1}}
-</div>
-
 <div *ngIf = "showLstm && this.model.layers[selectedLayer].name.startsWith('lstm')
-  && !this.model.layers[selectedLayer].name.includes('input')" style="display: block; width: 1000px;">
+  && !this.model.layers[selectedLayer].name.includes('input')" style="display: block; width: 800px;">
   <canvas baseChart
   [labels] = "barChartLabel"
   [datasets]="barChartData"
   [options]="barChartOptions"
   [chartType]="barChartType">
 </canvas>
-</div>
-
-<div *ngIf = "showDense
-&& this.model.layers[selectedLayer].name.startsWith('dense')"
-style="display: block; width: 1000px;">
-  <canvas baseChart
-    [labels] = "barChartLabel2"
-    [datasets]="barChartData2"
-    [options]="barChartOptions2"
-    [chartType]="barChartType2">
-  </canvas>
-</div>
-
-<div *ngIf = "showLSTMInput && this.model.layers[selectedLayer].name.startsWith('lstm')
-  && this.model.layers[selectedLayer].name.includes('input')">
-Input Layer to LSTM Layer
 </div>
