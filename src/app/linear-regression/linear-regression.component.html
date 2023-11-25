@@ -1,4 +1,23 @@
 <h2><u>Linear Regression</u></h2>
+<p> Linear regression models the relationship between features and a target variable.
+ It tries to predict a target variable based on the inputs </p>
+
+<p> The best fit line is: f(X) = &Theta;.X  where &Theta; is the set of trained weights, X is the feature
+  vector</p>
+
+ <p>The linear regression algorithm with some learning rate and initial weights,
+    and trains by making updates to the weights based on the sum if the square of the distance
+    between the current best fit line and the points. This update is based on the learning rate &alpha;</p>
+
+ <p>In the below simulation, we have a linear regression model for the xy plane.
+   The best fit line will be y = &Theta;<sub>1</sub> + &Theta;<sub>2</sub>x.
+   You can enter a starting learning rate and weights, and add points to see how
+   the best fit line updates with each iteration.</p>
+
+<p>Ex: Insert points: (0,1);(1,2);(1,3);(2,4),(3,4);(4,5);(4,6);(5,7);(7,8);(9,10)
+
+  &Theta;<sub>1</sub>: 0, &Theta;<sub>2</sub>: 0, &alpha;: 0.001</p>
+
 <form id="parameterForm" *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
   <label for="points">Insert Points: </label>
   <textarea ngModel id="w3mission" rows="4" cols="50" name = "points" id="points" form = "parameterForm">
