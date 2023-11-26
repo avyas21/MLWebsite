@@ -1,3 +1,10 @@
+# Build for GitHub Pages
+`NODE_OPTIONS=--openssl-legacy-provider ng build --prod --output-path docs --base-href="https://avyas21.github.io/MLWebsite/"`
+
+`cp docs/index.html docs/404.html`
+
+Commit
+
 # MLVisualizer
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.6.
