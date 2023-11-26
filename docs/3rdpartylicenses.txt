@@ -72,7 +72,7 @@ Copyright (c) 2015 - 2018, Google LLC.
 All rights reserved.
 
 All contributions by Microsoft:
-Copyright (c) 2017 - 2018, Microsoft, Inc.
+Copyright (c) 2017 - 2018, Microsoft, LLC
 All rights reserved.
 
 All other contributions:
@@ -307,6 +307,7 @@ SOFTWARE.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
 
 chart.js
 MIT
