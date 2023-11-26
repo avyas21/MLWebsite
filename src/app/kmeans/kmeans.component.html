@@ -1,4 +1,18 @@
 <h2><u>K-Means Clustering</u></h2>
+<p>K-Means is a clustering algorithm which organizes a set of points into k groups. <br/>
+The way this algorithm works is very simple: <br/>
+1. It chooses k random points as centroids (these are points that define the center of a group)<br/>
+2. It then assigns all points to the closest centroid. <br/>
+3. It updates the centroid for each group by taking the average of all points assigned to the group. <br/>
+4. It iterates through steps 2-3 till convergence.
+</p>
+
+<p> In the below simulation, we have a k-means model for the xy plane.
+You can enter a list of points and the number of groups you want to organize the points into
+and iterate through the steps to see how the centroids get updated based on the random selection on centroids.</p>
+
+<p>Ex: Insert Points: (0,1);(1,2);(1,3);(1,4);(2,5);(10,11);(10,14);(14,10);(15,13);(10,12), k: 2</p>
+
 <form id="parameterForm" *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
   <label for="points">Insert Points: </label>
   <textarea ngModel id="w3mission" rows="4" cols="50" name = "points" id="points" form = "parameterForm">

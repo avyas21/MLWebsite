@@ -1,4 +1,28 @@
 <h2><u>Logistic Regression</u></h2>
+<p> Logistic regression is a classification algorithm that models the relationship between features and a target variable.</p>
+
+<p> Logistic regression predicts the probability of a given class by using the
+   sigmoid function on the output from the linear regression function.</p>
+
+<p> The decision boundary is f(X) = &Theta;.X where &Theta; is the set of
+     trained weights, X is the feature vector</p>
+
+<p>The logistic regression algorithm starts with some learning rate and initial weights,
+    and trains by making updates to the weights based on the sum of the sigmoid values
+    of f(X). This update is based on the learning rate &alpha;</p>
+
+ <p>In the below simulation, we have a logistic regression model for the xy plane
+   that classifies points into two types: A and B.
+   The decision boundary will be f(x,y) = &Theta;<sub>0</sub> + &Theta;<sub>1</sub>x + &Theta;<sub>2</sub>y.
+   You can enter a starting learning rate and weights, and add points to see how
+   the best fit line updates with each iteration.</p>
+
+<p>Ex: Insert points: (0,1,A);(1,2,A);(1,3,A);(2,4,A);(3,4,A);(4,9,B);(4,10,B);(5,11,B);(7,12,B);(9,14,B)
+
+  &Theta;<sub>0</sub>: 0, &Theta;<sub>1</sub>: 0, &Theta;<sub>2</sub>: 0, &alpha;: 0.1 <br/>
+  For this case, you will need to step through in increments of 50s to see the decision boundary update!
+</p>
+
 <form id="parameterForm" *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
   <label for="points">Insert Points: </label>
   <textarea ngModel id="w3mission" rows="4" cols="50" name = "points" id="points" form = "parameterForm">
@@ -36,21 +60,23 @@
 
 
 <div *ngIf = "gotParameters">
-  Update Rules: <br/>
+  Update Rules(x<sub>1</sub> is the x value, x<sub>2</sub> is the y value of the points): <br/>
+  hypothesis(x<sub>1</sub>,x<sub>2</sub>) = sigmoid(&Theta;<sub>0</sub> +
+  &Theta;<sub>1</sub>x<sub>1</sub> + &Theta;<sub>2</sub>x<sub>2</sub>)<br/>
   &Theta;<sub>0</sub> = &Theta;<sub>0</sub> - (&alpha;/data.length) * &Sigma;<sub>(x<sub>1</sub>
   ,x<sub>2</sub>)  &epsilon;
     Data</sub> hypothesis(x<sub>1</sub>
-    ,x<sub>2</sub>) - y <br/>
+    ,x<sub>2</sub>) <br/>
 
   &Theta;<sub>1</sub> = &Theta;<sub>1</sub> - (&alpha;/data.length) * &Sigma;<sub>(x<sub>1</sub>
   ,x<sub>2</sub>) &epsilon;
-    Data</sub> (hypothesis(x<sub>1</sub>
-    ,x<sub>2</sub>) - y)*x<sub>1</sub>  <br/>
+    Data</sub> hypothesis(x<sub>1</sub>
+    ,x<sub>2</sub>)*x<sub>1</sub>  <br/>
 
   &Theta;<sub>2</sub> = &Theta;<sub>2</sub> - (&alpha;/data.length) * &Sigma;<sub>(x<sub>1</sub>
   ,x<sub>2</sub>) &epsilon;
-    Data</sub> (hypothesis(x<sub>1</sub>
-    ,x<sub>2</sub>) - y )*x<sub>2</sub>
+    Data</sub> hypothesis(x<sub>1</sub>
+    ,x<sub>2</sub>)*x<sub>2</sub>
 </div>
 
 <div *ngIf = "gotParameters">
