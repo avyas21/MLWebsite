@@ -1,11 +1,35 @@
 <h2><u>Support Vector Machines</u></h2>
+<p> Support Vector Machine (SVM) is a classification/regression algorithm that makes predictions based on combining
+a set of weights with the feature vector. </p>
+
+<p> SVM can use various kernels to have different shapes for the decision boundary.
+  The decision boundary/best fit line for a linear case is: f(X) = W.X + b
+  where W is the set of trained weights, X is the feature
+  vector, b is the bias. The goal of SVM is to the maximize distance between data points and the decision boundary / best fit line
+  (called a hyperplane).</p>
+
+ <p>Linear SVMs starts with some learning rate, initial weights and bias, and trains by making
+   updates to the weights/bias to make the decision boundary be as far away from the points.
+    In linear SVM for binary classification, if the output of f(X) is greater than or equal to 1,
+    SMV classifies the input to one class and if f(X) is less than or equal to -1, it classifies
+    the input as the other class. During training, updates are made
+ to the decision boundary regardless of whether the point is misclassified or not.
+This update is based on the hinge loss which relies on the learning rate and
+the regularization parameter.</p>
+
+ <p>In the below simulation, we have an SVM for the xy plane that classifies
+   points into two types A and B (the decision boundary will be f(x,y) = W<sub>1</sub>x + W<sub>2</sub>y + b).
+   You can enter a starting learning rate and weights, and add points to see how
+    the decision boundary updates based on the points added</p>
+
+<p>Ex: Learning Rate: 0.1, Regularization Parameter: 0.1, W: 1 and 1, b: 1</p>
 <form *ngIf = "!gotParameters" #parameterForm="ngForm" (ngSubmit)="getParameters(parameterForm)" action = "">
 
   <label for="alpha">Learning Rate: </label>
   <input type="number" id="alpha"
          ngModel name="alpha" required>
 
- <label for="gamma">Regularisation Parameter: </label>
+ <label for="gamma">Regularization Parameter: </label>
  <input type="number" id="gamma"
         ngModel name="gamma" required>
 

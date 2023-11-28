@@ -154,7 +154,7 @@ export class KnnComponent implements OnInit {
     }
 
     console.log(closest);
-    this.classify = 'Of the Closest Points to (' + form.value.x1.toString() + ','
+    this.classify = 'Of the ' + this.k + ' closest Points to (' + form.value.x1.toString() + ','
       + form.value.x2.toString() + '), ' + numA.toString();
     this.prepareString(numA,numB);
 
