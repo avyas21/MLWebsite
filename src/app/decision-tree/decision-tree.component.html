@@ -1,4 +1,25 @@
 <h2><u>Decision Tree</u></h2>
+<p>Decision trees predict a target variable (classification or regression)
+based on learning some decision rules from the training data. These rules are modeled
+into a tree-based structure. The training process starts with a root node
+and the algorithm keeps creating sub-nodes based on attributes that have the largest
+information gain (how well the attribute separates the training data) and the
+smallest entropy (measure of randomness). The training process stops when we
+have all tree paths leading to leaf nodes. </p>
+
+<p> In the below simulation, we have a decision tree model that will predict
+  the resulting color if you mix a primary and secondary color. You need to add
+a minimum of 3 points before making the tree. </p>
+<p>Ex: Primary Color: Red, Secondary Color: Red, Result Color: Red <br/>
+Primary Color: Red, Secondary Color: Blue, Result Color: Purple <br/>
+Primary Color: Red, Secondary Color: Yellow, Result Color: Orange</p>
+<p>Ex 2: Primary Color: Red, Secondary Color: Blue, Result Color: Red <br/>
+Primary Color: Blue, Secondary Color: Red, Result Color: Purple <br/>
+Primary Color: Yellow, Secondary Color: Red, Result Color: Orange</p>
+
+<p>You can see how the constructed tree differs based on the points added and you
+can test the model with some test data.</p>
+
 <form *ngIf = "!gotParameters" #addForm="ngForm" (ngSubmit)="addTrainPoint(addForm)" action = "">
 
   <label for="color1">Primary Color: </label>

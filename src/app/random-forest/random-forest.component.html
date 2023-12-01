@@ -1,4 +1,28 @@
 <h2><u>Random Forest</u></h2>
+
+<p>Random forests predict a target variable (classification or regression)
+by creating multiple decision trees and polling the results from all the
+constructed trees to give the final result. These decision trees are created
+by taking random points from the training set to train each decision tree.</p>
+
+<p> In the below simulation, we have a random forest model that will predict
+  the resulting color if you mix a primary and secondary color. You need to add
+a minimum of 3 points before creating the model. </p>
+<p>Ex: Primary Color: Red, Secondary Color: Red, Result Color: Red <br/>
+Primary Color: Red, Secondary Color: Blue, Result Color: Purple <br/>
+Primary Color: Red, Secondary Color: Yellow, Result Color: Orange</p>
+<p>Ex 2: Primary Color: Red, Secondary Color: Blue, Result Color: Red <br/>
+Primary Color: Blue, Secondary Color: Red, Result Color: Purple <br/>
+Primary Color: Yellow, Secondary Color: Red, Result Color: Orange</p>
+
+<p>After you add a minimum of three points, you specify the number of decision
+trees you want the model to use and the sample size. The sample size specifies
+the number of random points to take from the points you added to create the
+decision trees</p>
+
+<p>After the model is created, you can evaluate the behavior of the model using
+test data.</p>
+
 <form *ngIf = "!gotParameters" #addForm="ngForm" (ngSubmit)="addTrainPoint(addForm)" action = "">
 
   <label for="color1">Primary Color: </label>
